@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AppointmentStatus {
+  BOOKED
+  CANCELLED
+  COMPLETED
+  RESCHEDULED
+}
+
+enum DayOfWeek {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+}
+
+enum ScheduleExceptionType {
+  OFF
+  CUSTOM
+}
+
+model Doctor {
+  id         String  @id @default(cuid())
+  name       String
+  department String
+  speciality String
+  isActive   Boolean @default(true)
+
+  appointments Appointment[]
+  schedules    DoctorSchedule[]
+  exceptions   ScheduleException[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DoctorSchedule {
+  id        String    @id @default(cuid())
+  doctorId  String
+  doctor    Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  dayOfWeek DayOfWeek
+  startTime String // "HH:mm" wall-clock time
+  endTime   String // "HH:mm" wall-clock time
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([doctorId])
+}
+
+model Appointment {
+  id          String            @id @default(cuid())
+  doctorId    String
+  doctor      Doctor            @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  patientName String
+  startTime   DateTime
+  endTime     DateTime
+  status      AppointmentStatus @default(BOOKED)
+  reason      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([doctorId, startTime])
+}
+
+model ScheduleException {
+  id        String                @id @default(cuid())
+  doctorId  String
+  doctor    Doctor                @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  date      DateTime              @db.Date
+  type      ScheduleExceptionType // OFF or CUSTOM
+  startTime String?
+  endTime   String?
+  reason    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([doctorId, date])
+}
