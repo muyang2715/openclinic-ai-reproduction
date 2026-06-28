@@ -10,15 +10,28 @@ export const createAppointment = (data: CreateAppointmentInput) =>
     data: data as Prisma.AppointmentUncheckedCreateInput,
   });
 
-export const findAppointments = (doctorId?: string) => {
-  const args: Prisma.AppointmentFindManyArgs = doctorId
-    ? { where: { doctorId } }
-    : {};
-  return prisma.appointment.findMany(args);
-};
+const doctorInclude = {
+  doctor: { select: { id: true, name: true, speciality: true } },
+} satisfies Prisma.AppointmentInclude;
+
+export const findAppointments = (args: {
+  skip: number;
+  take: number;
+  where: Prisma.AppointmentWhereInput;
+}) =>
+  prisma.appointment.findMany({
+    where: args.where,
+    skip: args.skip,
+    take: args.take,
+    orderBy: { startTime: "desc" },
+    include: doctorInclude,
+  });
+
+export const countAppointments = (where: Prisma.AppointmentWhereInput) =>
+  prisma.appointment.count({ where });
 
 export const findAppointmentById = (id: string) =>
-  prisma.appointment.findUnique({ where: { id } });
+  prisma.appointment.findUnique({ where: { id }, include: doctorInclude });
 
 export const updateAppointment = (id: string, data: UpdateAppointmentInput) =>
   prisma.appointment.update({

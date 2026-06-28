@@ -43,6 +43,7 @@ const options: swaggerJSDoc.Options = {
       { name: "Schedules", description: "Doctor weekly availability endpoints" },
       { name: "Appointments", description: "Patient appointment endpoints" },
       { name: "Exceptions", description: "Doctor availability exception endpoints" },
+      { name: "Analytics", description: "Aggregated dashboard & analytics data" },
     ],
     components: {
       schemas: {
@@ -122,6 +123,14 @@ const options: swaggerJSDoc.Options = {
             endTime: { type: "string", format: "date-time" },
             status: appointmentStatus,
             reason: { type: "string", nullable: true },
+            doctor: {
+              type: "object",
+              properties: {
+                id: { type: "string" },
+                name: { type: "string" },
+                speciality: { type: "string" },
+              },
+            },
             createdAt: { type: "string", format: "date-time" },
             updatedAt: { type: "string", format: "date-time" },
           },
@@ -208,8 +217,36 @@ const options: swaggerJSDoc.Options = {
       "/api/v1/doctors/getDoctors": {
         get: {
           tags: ["Doctors"],
-          summary: "List all doctors",
-          responses: { 200: { description: "Doctors fetched successfully" } },
+          summary: "List doctors (paginated, searchable, filterable)",
+          parameters: [
+            {
+              in: "query",
+              name: "page",
+              schema: { type: "integer", default: 1, minimum: 1 },
+            },
+            {
+              in: "query",
+              name: "limit",
+              schema: { type: "integer", default: 10, minimum: 1, maximum: 100 },
+            },
+            {
+              in: "query",
+              name: "search",
+              schema: { type: "string" },
+              description: "Matches name, speciality, or department",
+            },
+            {
+              in: "query",
+              name: "status",
+              schema: { type: "string", enum: ["active", "inactive"] },
+            },
+          ],
+          responses: {
+            200: {
+              description:
+                "Paginated doctors: data = { items, total, page, limit }",
+            },
+          },
         },
       },
       "/api/v1/doctors/getDoctorById/{id}": {
@@ -353,17 +390,32 @@ const options: swaggerJSDoc.Options = {
       "/api/v1/appointments/getAppointments": {
         get: {
           tags: ["Appointments"],
-          summary: "List appointments (optionally filtered by doctorId)",
+          summary: "List appointments (paginated, filterable, searchable)",
           parameters: [
             {
               in: "query",
-              name: "doctorId",
-              required: false,
+              name: "page",
+              schema: { type: "integer", default: 1, minimum: 1 },
+            },
+            {
+              in: "query",
+              name: "limit",
+              schema: { type: "integer", default: 10, minimum: 1, maximum: 100 },
+            },
+            { in: "query", name: "doctorId", schema: { type: "string" } },
+            { in: "query", name: "status", schema: appointmentStatus },
+            {
+              in: "query",
+              name: "search",
               schema: { type: "string" },
+              description: "Matches patient name",
             },
           ],
           responses: {
-            200: { description: "Appointments fetched successfully" },
+            200: {
+              description:
+                "Paginated appointments: data = { items, total, page, limit }",
+            },
           },
         },
       },
@@ -485,6 +537,30 @@ const options: swaggerJSDoc.Options = {
           responses: {
             200: { description: "Exception deleted successfully" },
             404: { description: "Exception not found" },
+          },
+        },
+      },
+      "/api/v1/analytics/getDashboardStats": {
+        get: {
+          tags: ["Analytics"],
+          summary: "Aggregated dashboard stats",
+          responses: {
+            200: {
+              description:
+                "data = { totalDoctors, totalPatients, todaysAppointments, upcomingAppointments, weeklyAppointments[], appointmentsTrend[], appointmentsByStatus[], recentAppointments[], latestDoctors[] }",
+            },
+          },
+        },
+      },
+      "/api/v1/analytics/getAnalytics": {
+        get: {
+          tags: ["Analytics"],
+          summary: "Aggregated analytics metrics",
+          responses: {
+            200: {
+              description:
+                "data = { totalAppointments, activeDoctors, totalDoctors, totalPatients, averageAppointmentMinutes, appointmentsByStatus[], appointmentsTrend[], weeklyAppointments[] }",
+            },
           },
         },
       },

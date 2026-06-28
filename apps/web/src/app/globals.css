@@ -1,0 +1,142 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ------------------------------------------------------------------ */
+/* OpenClinic AI — brand tokens                                       */
+/* ------------------------------------------------------------------ */
+:root {
+  /* surfaces & text */
+  --background: #fafafc;
+  --foreground: #111827;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --card-foreground: #111827;
+  --popover: #ffffff;
+  --popover-foreground: #111827;
+
+  /* brand */
+  --brand: #7c3aed;
+  --brand-pink: #ec4899;
+  --accent-sky: #38bdf8;
+
+  --primary: #7c3aed;
+  --primary-foreground: #ffffff;
+
+  --secondary: #f4f4f7;
+  --secondary-foreground: #111827;
+
+  --muted: #f4f4f7;
+  --muted-foreground: #6b7280;
+
+  --accent: #f3eefe; /* light brand tint for hovers */
+  --accent-foreground: #6d28d9;
+
+  /* status */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  /* lines & fields */
+  --border: #eceef3;
+  --input: #eceef3;
+  --ring: #7c3aed;
+
+  /* chart palette */
+  --chart-1: #7c3aed;
+  --chart-2: #ec4899;
+  --chart-3: #38bdf8;
+  --chart-4: #22c55e;
+  --chart-5: #f59e0b;
+
+  /* radius scale (spec: button/input 12, card/table 16, modal 20) */
+  --radius: 0.75rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-brand: var(--brand);
+  --color-brand-pink: var(--brand-pink);
+  --color-accent-sky: var(--accent-sky);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+  *:focus-visible {
+    @apply outline-none ring-2 ring-ring/60 ring-offset-2 ring-offset-background;
+  }
+}
+
+@layer utilities {
+  /* brand gradient — logo, hero, CTAs, empty states, loaders only */
+  .bg-brand-gradient {
+    background-image: linear-gradient(135deg, #ec4899, #8b5cf6);
+  }
+  .text-brand-gradient {
+    background-image: linear-gradient(135deg, #ec4899, #8b5cf6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* soft, premium shadows (not floating) */
+  .shadow-soft {
+    box-shadow:
+      0 1px 2px rgba(17, 24, 39, 0.04),
+      0 1px 3px rgba(17, 24, 39, 0.06);
+  }
+  .shadow-soft-md {
+    box-shadow:
+      0 2px 4px rgba(17, 24, 39, 0.04),
+      0 6px 16px rgba(17, 24, 39, 0.06);
+  }
+  .shadow-soft-lg {
+    box-shadow:
+      0 4px 8px rgba(17, 24, 39, 0.04),
+      0 12px 32px rgba(17, 24, 39, 0.08);
+  }
+}

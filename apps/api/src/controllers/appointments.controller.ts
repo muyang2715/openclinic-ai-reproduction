@@ -2,7 +2,9 @@ import { Request, Response } from "express";
 import {
   createAppointmentSchema,
   updateAppointmentSchema,
+  listAppointmentsQuerySchema,
 } from "../schemas/appointment.schema";
+import { Prisma } from "../generated/prisma/client";
 import * as appointmentsData from "../data/appointments.data";
 import { AppError } from "../errors/AppError";
 import { sendSuccess, sendError } from "../helpers/apiResponse";
@@ -23,18 +25,34 @@ export const createAppointment = async (req: Request, res: Response) => {
   }
 };
 
-// getAppointments (optionally by doctorId)
+// getAppointments (paginated, filterable by doctorId/status, searchable by patient)
 export const getAppointments = async (req: Request, res: Response) => {
   try {
-    const doctorId =
-      typeof req.query.doctorId === "string" ? req.query.doctorId : undefined;
-    const appointments = await appointmentsData.findAppointments(doctorId);
-    return sendSuccess(
-      res,
-      200,
-      "Appointments fetched successfully",
-      appointments,
-    );
+    const { page, limit, doctorId, status, search } =
+      listAppointmentsQuerySchema.parse(req.query);
+
+    const where: Prisma.AppointmentWhereInput = {};
+    if (doctorId) where.doctorId = doctorId;
+    if (status) where.status = status;
+    if (search) {
+      where.patientName = { contains: search, mode: "insensitive" };
+    }
+
+    const [items, total] = await Promise.all([
+      appointmentsData.findAppointments({
+        skip: (page - 1) * limit,
+        take: limit,
+        where,
+      }),
+      appointmentsData.countAppointments(where),
+    ]);
+
+    return sendSuccess(res, 200, "Appointments fetched successfully", {
+      items,
+      total,
+      page,
+      limit,
+    });
   } catch (error) {
     return sendError(res, error);
   }

@@ -48,7 +48,7 @@ pnpm build    # tsc  -> ./dist
 pnpm start    # node dist/index.js
 ```
 
-The entry point is `src/index.ts`, which compiles to `dist/index.js` under `rootDir: ./src` — so `pnpm start` (`node dist/index.js`) is correct. The server bootstraps Express, serves Swagger UI at `/api-docs`, mounts versioned routes under `/api/v1`, and listens on `PORT` (set in `apps/api/.env`).
+The entry point is `src/index.ts`, which compiles to `dist/index.js` under `rootDir: ./src` — so `pnpm start` (`node dist/index.js`) is correct. The server bootstraps Express, enables CORS for `WEB_ORIGIN` (default `http://localhost:3000`), serves Swagger UI at `/api-docs`, mounts versioned routes under `/api/v1`, and listens on `PORT` (set in `apps/api/.env`).
 
 ### `apps/api` structure & conventions
 
@@ -64,6 +64,12 @@ Backend follows `docs/coding-standards.md` §2 (flat Express, no service layer):
 - `src/controllers/`, `src/data/`, `src/routes/` — per-resource. All four domain resources exist: `doctor`, `doctorSchedule` (`/schedules`), `appointment` (`/appointments` — `patientName`, `start`/`endTime`, `AppointmentStatus`, `reason?`; list filterable by `doctorId`), `scheduleException` (`/exceptions` — `date`, `OFF`/`CUSTOM` type, optional `HH:mm` times, unique per `[doctorId, date]` → 409 on duplicate).
 
 Routers mount under `/api/v1/<resource>` (e.g. `/api/v1/doctors`, `/api/v1/schedules`) with action-style paths: `POST /createDoctor`, `GET /getDoctors`, `GET /getDoctorById/:id`, `PATCH /updateDoctor/:id`, `DELETE /deleteDoctor/:id` (and the analogous `*Schedule*` set). Each controller wraps its body in `try/catch`, returning `sendSuccess(...)` on success and `sendError(res, error)` on failure. Endpoints are documented centrally in `config/swagger.ts` (not via route comments) and surface at `/api-docs`.
+
+`getDoctors` is **server-paginated**: query params `page` (default 1), `limit` (default 10, max 100), optional `search` (case-insensitive match on name/speciality/department) and `status` (`active`/`inactive`); its `data` is `{ items, total, page, limit }` (not a bare array). `getDoctorById` includes the doctor's `schedules`.
+
+`getAppointments` is likewise **server-paginated** (`page`/`limit`, optional `doctorId`, `status` (`AppointmentStatus`), `search` on patient name) returning `{ items, total, page, limit }`; appointment list/getById responses **include** the related `doctor` (`id`, `name`, `speciality`).
+
+A read-only **`analytics`** resource (`/api/v1/analytics`) aggregates real `doctor`/`appointment` data — `GET /getDashboardStats` and `GET /getAnalytics` — composing Prisma counts/`groupBy`/`distinct` (`data/analytics.data.ts`) with pure bucketing/average helpers (`helpers/analytics.ts`); no Patient entity exists, so "patients" is the count of distinct `patientName`s on appointments.
 
 `createDoctor` optionally accepts a `schedules[]` array and creates the doctor + weekly slots in one nested Prisma write (serves the single admin form), returning the doctor with `schedules` included. Individual slot edits go through the `schedules` resource, not `updateDoctor` (which does not touch schedules). The `schedules` list endpoint filters by a required `doctorId` query param.
 

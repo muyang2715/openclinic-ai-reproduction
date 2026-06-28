@@ -2,7 +2,9 @@ import { Request, Response } from "express";
 import {
   createDoctorSchema,
   updateDoctorSchema,
+  listDoctorsQuerySchema,
 } from "../schemas/doctor.schema";
+import { Prisma } from "../generated/prisma/client";
 import * as doctorsData from "../data/doctors.data";
 import { AppError } from "../errors/AppError";
 import { sendSuccess, sendError } from "../helpers/apiResponse";
@@ -18,11 +20,36 @@ export const createDoctor = async (req: Request, res: Response) => {
   }
 };
 
-// getDoctors
-export const getDoctors = async (_req: Request, res: Response) => {
+// getDoctors (paginated, searchable, filterable by status)
+export const getDoctors = async (req: Request, res: Response) => {
   try {
-    const doctors = await doctorsData.findDoctors();
-    return sendSuccess(res, 200, "Doctors fetched successfully", doctors);
+    const { page, limit, search, status } = listDoctorsQuerySchema.parse(
+      req.query,
+    );
+
+    const where: Prisma.DoctorWhereInput = {};
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { speciality: { contains: search, mode: "insensitive" } },
+        { department: { contains: search, mode: "insensitive" } },
+      ];
+    }
+    if (status) {
+      where.isActive = status === "active";
+    }
+
+    const [items, total] = await Promise.all([
+      doctorsData.findDoctors({ skip: (page - 1) * limit, take: limit, where }),
+      doctorsData.countDoctors(where),
+    ]);
+
+    return sendSuccess(res, 200, "Doctors fetched successfully", {
+      items,
+      total,
+      page,
+      limit,
+    });
   } catch (error) {
     return sendError(res, error);
   }

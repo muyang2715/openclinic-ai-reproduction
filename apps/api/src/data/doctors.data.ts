@@ -11,10 +11,23 @@ export const createDoctor = ({ schedules, ...doctor }: CreateDoctorInput) =>
     include: { schedules: true },
   });
 
-export const findDoctors = () => prisma.doctor.findMany();
+export const findDoctors = (args: {
+  skip: number;
+  take: number;
+  where: Prisma.DoctorWhereInput;
+}) =>
+  prisma.doctor.findMany({
+    where: args.where,
+    skip: args.skip,
+    take: args.take,
+    orderBy: { createdAt: "desc" },
+  });
+
+export const countDoctors = (where: Prisma.DoctorWhereInput) =>
+  prisma.doctor.count({ where });
 
 export const findDoctorById = (id: string) =>
-  prisma.doctor.findUnique({ where: { id } });
+  prisma.doctor.findUnique({ where: { id }, include: { schedules: true } });
 
 export const updateDoctor = (id: string, data: UpdateDoctorInput) =>
   prisma.doctor.update({ where: { id }, data: data as Prisma.DoctorUpdateInput });

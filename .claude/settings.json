@@ -2,7 +2,21 @@
   "permissions": {
     "allow": [
       "Bash(pnpm exec *)",
-      "Bash(pnpm install *)"
+      "Bash(pnpm install *)",
+      "Bash(rm -f src/app/page.module.css src/app/page.tsx)",
+      "Bash(rm -rf src/app/fonts)",
+      "Bash(rm -f public/file-text.svg public/globe.svg public/next.svg public/turborepo-dark.svg public/turborepo-light.svg public/vercel.svg public/window.svg)",
+      "Bash(pnpm add *)",
+      "Bash(cd /tmp)",
+      "Bash(curl -s http://localhost:3000/doctors/doc_01)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/doctors/nope)",
+      "Bash(curl -s http://localhost:3000/dashboard)",
+      "PowerShell($c = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { Stop-Process -Id $c.OwningProcess -Force; \"stopped\" } else { \"nothing on 3000\" })",
+      "Bash(curl -s http://localhost:5500/api/v1/doctors/getDoctors?search=derma)",
+      "PowerShell(foreach \\($port in 3000,5500\\) { $c = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { Stop-Process -Id $c.OwningProcess -Force; \"stopped $port\" } else { \"nothing on $port\" } })",
+      "Bash(rm -f \"src/app/\\(app\\)/dashboard/_components/weekly-appointments-chart.tsx\" \"src/app/\\(app\\)/dashboard/_components/appointment-status-chart.tsx\" \"src/app/\\(app\\)/dashboard/_components/patient-growth-chart.tsx\")",
+      "Bash(rm -rf src/lib/mock)",
+      "Bash(ls \"src/app/\\(app\\)/dashboard/_components\")"
     ]
   }
 }
