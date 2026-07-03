@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Bell, Menu, Settings } from "lucide-react";
 
+import { authClient } from "@/lib/auth-client";
 import { SearchInput } from "@/components/ui/search-input";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,6 +32,19 @@ import { SidebarNav } from "./sidebar-nav";
 function Topbar() {
   const [search, setSearch] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
+
+  const email = user?.email ?? "";
+  const displayName = user?.name || email.split("@")[0] || "Admin";
+  const initials =
+    displayName
+      .split(" ")
+      .map((part) => part.charAt(0))
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "AU";
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-border bg-surface/80 px-4 backdrop-blur-md sm:px-6">
@@ -86,8 +101,8 @@ function Topbar() {
               aria-label="Account menu"
             >
               <Avatar className="size-9">
-                <AvatarImage src="" alt="" />
-                <AvatarFallback>AU</AvatarFallback>
+                <AvatarImage src={user?.image ?? ""} alt={displayName} />
+                <AvatarFallback>{initials}</AvatarFallback>
               </Avatar>
             </button>
           </DropdownMenuTrigger>
@@ -95,10 +110,10 @@ function Topbar() {
             <DropdownMenuLabel>
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-foreground">
-                  Admin User
+                  {displayName}
                 </span>
                 <span className="text-xs font-normal text-muted-foreground">
-                  admin@openclinic.ai
+                  {email || "Signed in"}
                 </span>
               </div>
             </DropdownMenuLabel>
@@ -106,7 +121,18 @@ function Topbar() {
             <DropdownMenuItem>Profile</DropdownMenuItem>
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive">Sign out</DropdownMenuItem>
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={() =>
+                authClient.signOut({
+                  fetchOptions: {
+                    onSuccess: () => router.push("/sign-in"),
+                  },
+                })
+              }
+            >
+              Sign out
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
