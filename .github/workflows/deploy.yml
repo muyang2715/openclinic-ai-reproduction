@@ -42,6 +42,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # @repo/shared compiles to dist/; the web app type-checks against those
+      # declarations, so it must be built before lint/check-types on a fresh checkout.
+      - name: Build shared package
+        run: pnpm --filter @repo/shared build
+
       - name: Lint
         run: pnpm lint
 
