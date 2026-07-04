@@ -1,0 +1,81 @@
+name: CI / Deploy
+
+# Runs on every push to main and on pull requests.
+# - "check"  : lints, type-checks, and builds the whole repo (catches broken code).
+# - "deploy" : only on a push to main, and only if "check" passed — SSHes into the
+#              EC2 server and redeploys.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1) Quality gate — must pass before anything is deployed.
+  # ---------------------------------------------------------------------------
+  check:
+    name: Lint, type-check & build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Type-check
+        run: pnpm check-types
+
+      - name: Build
+        run: pnpm build
+        env:
+          # Placeholder values so `next build` and Better Auth init succeed in CI.
+          # These are NOT secrets and are never used at runtime — the real values
+          # live in the .env files on the server.
+          NEXT_PUBLIC_API_URL: http://localhost:5500/api/v1
+          NEXT_PUBLIC_SOCKET_URL: http://localhost:5500
+          DATABASE_URL: postgresql://user:pass@localhost:5432/db
+          BETTER_AUTH_SECRET: ci_placeholder_secret_0123456789abcdef
+          BETTER_AUTH_URL: http://localhost:3000
+
+  # ---------------------------------------------------------------------------
+  # 2) Deploy — only on push to main, and only if "check" succeeded.
+  # ---------------------------------------------------------------------------
+  deploy:
+    name: Deploy to EC2
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH to the server and redeploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e                                     # stop on the first error
+            export PATH=$PATH:/usr/bin:/usr/local/bin  # make node/pnpm/pm2 findable
+            cd ~/openclinic
+            git pull origin main                       # get the new code
+            pnpm install --frozen-lockfile             # sync deps (+ prisma generate)
+            pnpm --filter @repo/shared build           # build shared package first
+            pnpm --filter api build                    # build backend
+            pnpm --filter web build                    # build frontend (heavy step)
+            pnpm --filter api migrate:deploy           # apply any new DB migrations
+            pm2 reload ecosystem.config.js --update-env  # restart both apps with new code
+            pm2 save                                   # persist the process list
