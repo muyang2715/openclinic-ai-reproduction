@@ -69,7 +69,7 @@ export function SignInForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="admin@openclinic.com"
+            placeholder="you@yourclinic.com"
             className="pl-9"
           />
         </div>

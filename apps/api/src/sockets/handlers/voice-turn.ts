@@ -8,7 +8,7 @@ import {
 import { runAgent } from "../../agents";
 import { transcribeAudio } from "../../libs/deepgram";
 import { synthesizeSpeech } from "../../libs/elevenlabs";
-import { GREETING } from "../../config/voice";
+import { greetingFor } from "../../config/voice";
 import {
   appendSegment,
   appendTranscript,
@@ -49,10 +49,13 @@ const speak = async (
   if (session) session.agentSpeaking = false;
 };
 
-// The agent greets the caller as soon as the call connects.
-export const sendGreeting = async (socket: CallSocket): Promise<void> => {
+// The agent greets the caller as soon as the call connects — by name if known.
+export const sendGreeting = async (
+  socket: CallSocket,
+  patientName?: string,
+): Promise<void> => {
   try {
-    await speak(socket, GREETING, null);
+    await speak(socket, greetingFor(patientName), null);
   } catch (error) {
     console.error("[voice] greeting failed", error);
   }
@@ -84,6 +87,8 @@ export const runVoiceTurn = async (socket: CallSocket): Promise<void> => {
     const { reply, route } = await runAgent({
       sessionId: session.callId,
       message: transcript,
+      ...(session.patientName ? { patientName: session.patientName } : {}),
+      ...(session.email ? { email: session.email } : {}),
     });
 
     await speak(socket, reply, route);

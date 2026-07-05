@@ -16,7 +16,7 @@ const container = {
 
 function Hero() {
   const reduceMotion = useReducedMotion();
-  const { startCall } = useCall();
+  const { openForm } = useCall();
   const { data: session } = authClient.useSession();
   const item = {
     hidden: reduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 },
@@ -68,7 +68,7 @@ function Hero() {
             <Button
               variant="gradient"
               size="lg"
-              onClick={startCall}
+              onClick={openForm}
               className="transition-transform hover:scale-[1.03]"
             >
               <Mic className="size-4" />

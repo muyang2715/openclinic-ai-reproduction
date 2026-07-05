@@ -17,12 +17,16 @@ type CallSocket = Socket<ClientToServerEvents, ServerToClientEvents>;
 // handlers/voice-turn.
 export const registerSocketHandlers = (io: CallServer): void => {
   io.on("connection", (socket: CallSocket) => {
-    socket.on(SocketEvent.CallStart, () => {
-      const session = createSession(socket.id);
+    socket.on(SocketEvent.CallStart, (payload) => {
+      // Payload is defensively optional so a client that omits it still works.
+      const session = createSession(socket.id, {
+        ...(payload?.patientName ? { patientName: payload.patientName } : {}),
+        ...(payload?.email ? { email: payload.email } : {}),
+      });
       console.log(`[call] start ${session.callId} (socket ${socket.id})`);
       socket.emit(SocketEvent.CallReady, { callId: session.callId });
-      // Agent greets first (spoken).
-      void sendGreeting(socket);
+      // Agent greets first (spoken), by name when we have it.
+      void sendGreeting(socket, session.patientName);
     });
 
     socket.on(SocketEvent.AudioChunk, (chunk) => {

@@ -4,6 +4,7 @@ import { AppointmentStatus } from "../generated/prisma/enums";
 const appointmentBaseSchema = z.object({
   doctorId: z.string().min(1),
   patientName: z.string().min(1),
+  patientEmail: z.string().email().optional(),
   startTime: z.coerce.date(),
   endTime: z.coerce.date(),
   status: z.nativeEnum(AppointmentStatus).default(AppointmentStatus.BOOKED),

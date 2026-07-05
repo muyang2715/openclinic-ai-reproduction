@@ -6,6 +6,7 @@ import { AppointmentStatus } from "../../generated/prisma/enums";
 import * as appointmentsData from "../../data/appointments.data";
 import * as doctorsData from "../../data/doctors.data";
 import { DEFAULT_APPOINTMENT_MINUTES } from "../../config/agents";
+import { sendAppointmentConfirmation } from "../../libs/mailer";
 
 const doctorSearchWhere = (query: string): Prisma.DoctorWhereInput => ({
   isActive: true,
@@ -40,101 +41,136 @@ export const listDoctorsTool = tool(
   },
 );
 
-export const bookAppointmentTool = tool(
-  async ({
-    doctorId,
-    doctorQuery,
-    patientName,
-    startTimeISO,
-    durationMinutes,
-    reason,
-  }: {
-    doctorId?: string;
-    doctorQuery?: string;
-    patientName: string;
-    startTimeISO: string;
-    durationMinutes?: number;
-    reason?: string;
-  }) => {
-    // Resolve the doctor by id, else by a name/speciality search.
-    let resolvedId = doctorId;
-    let doctorName = "";
-    if (resolvedId) {
-      const doctor = await doctorsData.findDoctorById(resolvedId);
-      if (!doctor) return `No doctor found with id ${resolvedId}.`;
-      doctorName = doctor.name;
-    } else {
-      if (!doctorQuery) return "Provide a doctor name/speciality or a doctorId.";
-      const matches = await doctorsData.findDoctors({
+// Context bound from the call/graph state — the caller's name/email come from the
+// pre-call form, so they're trusted here rather than left to the LLM to carry.
+export type BookAppointmentContext = {
+  patientName?: string;
+  patientEmail?: string;
+};
+
+// Factory: builds the book_appointment tool for one conversation, closing over the
+// caller's form-provided name/email. Rebuilt per invocation in appointment.node.
+export const makeBookAppointmentTool = (ctx: BookAppointmentContext = {}) =>
+  tool(
+    async ({
+      doctorId,
+      doctorQuery,
+      patientName,
+      startTimeISO,
+      durationMinutes,
+      reason,
+    }: {
+      doctorId?: string;
+      doctorQuery?: string;
+      patientName?: string;
+      startTimeISO: string;
+      durationMinutes?: number;
+      reason?: string;
+    }) => {
+      // Prefer the form name; fall back to whatever the model supplied.
+      const finalName = ctx.patientName ?? patientName;
+      if (!finalName) return "I still need the patient's name to book.";
+
+      // Resolve the doctor by id, else by a name/speciality search.
+      let resolvedId = doctorId;
+      let doctorName = "";
+      let doctorSpeciality = "";
+      if (resolvedId) {
+        const doctor = await doctorsData.findDoctorById(resolvedId);
+        if (!doctor) return `No doctor found with id ${resolvedId}.`;
+        doctorName = doctor.name;
+        doctorSpeciality = doctor.speciality;
+      } else {
+        if (!doctorQuery)
+          return "Provide a doctor name/speciality or a doctorId.";
+        const matches = await doctorsData.findDoctors({
+          skip: 0,
+          take: 1,
+          where: doctorSearchWhere(doctorQuery),
+        });
+        const first = matches[0];
+        if (!first) {
+          const all = await doctorsData.findDoctors({
+            skip: 0,
+            take: 10,
+            where: { isActive: true },
+          });
+          const list = all.map((d) => `${d.name} (${d.speciality})`).join(", ");
+          return `No active doctor matches "${doctorQuery}". Available doctors: ${list}. Retry with one of these.`;
+        }
+        resolvedId = first.id;
+        doctorName = first.name;
+        doctorSpeciality = first.speciality;
+      }
+
+      const start = new Date(startTimeISO);
+      if (Number.isNaN(start.getTime())) {
+        return "startTimeISO is not a valid date-time.";
+      }
+      const minutes = durationMinutes ?? DEFAULT_APPOINTMENT_MINUTES;
+      const end = new Date(start.getTime() + minutes * 60_000);
+
+      // Light overlap check against existing booked appointments.
+      const clash = await appointmentsData.findAppointments({
         skip: 0,
         take: 1,
-        where: doctorSearchWhere(doctorQuery),
+        where: {
+          doctorId: resolvedId,
+          status: AppointmentStatus.BOOKED,
+          startTime: { lt: end },
+          endTime: { gt: start },
+        },
       });
-      const first = matches[0];
-      if (!first) {
-        const all = await doctorsData.findDoctors({
-          skip: 0,
-          take: 10,
-          where: { isActive: true },
-        });
-        const list = all
-          .map((d) => `${d.name} (${d.speciality})`)
-          .join(", ");
-        return `No active doctor matches "${doctorQuery}". Available doctors: ${list}. Retry with one of these.`;
+      if (clash.length > 0) {
+        return `Dr. ${doctorName} already has an appointment overlapping that time. Please suggest another slot.`;
       }
-      resolvedId = first.id;
-      doctorName = first.name;
-    }
 
-    const start = new Date(startTimeISO);
-    if (Number.isNaN(start.getTime())) {
-      return "startTimeISO is not a valid date-time.";
-    }
-    const minutes = durationMinutes ?? DEFAULT_APPOINTMENT_MINUTES;
-    const end = new Date(start.getTime() + minutes * 60_000);
-
-    // Light overlap check against existing booked appointments.
-    const clash = await appointmentsData.findAppointments({
-      skip: 0,
-      take: 1,
-      where: {
+      const appointment = await appointmentsData.createAppointment({
         doctorId: resolvedId,
+        patientName: finalName,
+        startTime: start,
+        endTime: end,
         status: AppointmentStatus.BOOKED,
-        startTime: { lt: end },
-        endTime: { gt: start },
-      },
-    });
-    if (clash.length > 0) {
-      return `Dr. ${doctorName} already has an appointment overlapping that time. Please suggest another slot.`;
-    }
+        ...(ctx.patientEmail ? { patientEmail: ctx.patientEmail } : {}),
+        ...(reason ? { reason } : {}),
+      });
 
-    const appointment = await appointmentsData.createAppointment({
-      doctorId: resolvedId,
-      patientName,
-      startTime: start,
-      endTime: end,
-      status: AppointmentStatus.BOOKED,
-      ...(reason ? { reason } : {}),
-    });
+      // Fire the confirmation email (guarded/no-throw). A failure here must not
+      // fail the booking, which is already persisted.
+      if (ctx.patientEmail) {
+        await sendAppointmentConfirmation({
+          to: ctx.patientEmail,
+          patientName: finalName,
+          doctorName,
+          ...(doctorSpeciality ? { speciality: doctorSpeciality } : {}),
+          startTime: start,
+          endTime: end,
+          durationMinutes: minutes,
+          ...(reason ? { reason } : {}),
+        });
+      }
 
-    return `Booked appointment ${appointment.id} with ${doctorName} for ${patientName} starting ${start.toISOString()} (${minutes} min).`;
-  },
-  {
-    name: "book_appointment",
-    description:
-      "Book an appointment. Requires patientName and an absolute startTimeISO date-time, plus either doctorId or doctorQuery (name/speciality).",
-    schema: z.object({
-      doctorId: z.string().optional(),
-      doctorQuery: z
-        .string()
-        .optional()
-        .describe("doctor name or speciality if doctorId is unknown"),
-      patientName: z.string(),
-      startTimeISO: z
-        .string()
-        .describe("absolute ISO 8601 date-time, e.g. 2026-07-02T15:00:00"),
-      durationMinutes: z.number().optional(),
-      reason: z.string().optional(),
-    }),
-  },
-);
+      return `Booked appointment ${appointment.id} with ${doctorName} for ${finalName} starting ${start.toISOString()} (${minutes} min).`;
+    },
+    {
+      name: "book_appointment",
+      description:
+        "Book an appointment. Requires an absolute startTimeISO date-time, plus either doctorId or doctorQuery (name/speciality). The patient's name is already known from the call.",
+      schema: z.object({
+        doctorId: z.string().optional(),
+        doctorQuery: z
+          .string()
+          .optional()
+          .describe("doctor name or speciality if doctorId is unknown"),
+        patientName: z
+          .string()
+          .optional()
+          .describe("only if the caller's name is not already known"),
+        startTimeISO: z
+          .string()
+          .describe("absolute ISO 8601 date-time, e.g. 2026-07-02T15:00:00"),
+        durationMinutes: z.number().optional(),
+        reason: z.string().optional(),
+      }),
+    },
+  );

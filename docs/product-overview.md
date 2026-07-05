@@ -95,7 +95,9 @@ checkpointer keyed by `sessionId`, so the agent remembers earlier turns of the s
   - `list_doctors` — searches active doctors by name / speciality / department.
   - `book_appointment` — resolves the doctor (by id or a name/speciality search), **checks the schedule for an
     overlapping booked appointment**, and only then creates the appointment. On a clash it asks for another
-    slot; with no match it offers the available doctors.
+    slot; with no match it offers the available doctors. On success it stores the caller's email on the
+    appointment and sends a **branded confirmation email** (Resend). The tool is built per-conversation from
+    the caller's pre-call details, so the booking uses the real name/email rather than model-supplied values.
 
   Both tools call the same `data/` functions the REST API uses, so the agent books through exactly the code
   path a human admin would.
@@ -113,13 +115,16 @@ which both the REST endpoint (`POST /api/v1/agent/chat`) and the voice pipeline 
 The voice loop is realtime and socket-driven, so it lives outside the request/response controllers as a
 **pipeline of small functions** under [`apps/api/src/sockets/`](../apps/api/src/sockets/).
 
+0. Before the call connects, a **pre-call form** collects the caller's **name and email**. The name is
+   threaded through the whole call (so the agent greets them by first name and remembers it), and the email is
+   used to send the booking confirmation.
 1. The browser records **one utterance at a time** and, on detected silence, sends that turn's audio over
    **Socket.io**.
 2. The server buffers the turn and runs it through
    [`handlers/voice-turn.ts`](../apps/api/src/sockets/handlers/voice-turn.ts): **Deepgram** speech-to-text →
    `runAgent()` → **ElevenLabs** text-to-speech.
 3. It emits the caller's caption, the agent's caption, and the spoken audio back; the browser plays the reply
-   and shows live captions. The agent greets the caller on connect.
+   and shows live captions. The agent greets the caller **by first name** on connect.
 
 The **socket event contract is the single source of truth** in the shared package
 ([`packages/shared`](../packages/shared)), imported on both ends so the client and server can't drift.
@@ -208,20 +213,20 @@ watch mode), `pnpm build`, `pnpm lint`, `pnpm check-types`. The backend runs its
 
 ## Tech stack at a glance
 
-| Layer               | Technology                                               | Why                                                              |
-| ------------------- | -------------------------------------------------------- | ---------------------------------------------------------------- |
-| Agent orchestration | LangGraph.js `StateGraph` + `@langchain/openai` (OpenAI) | Explicit, inspectable multi-agent routing with per-session state |
-| Retrieval (RAG)     | Pinecone + LangChain embeddings/text-splitters           | Answers grounded in the clinic's own documents                   |
-| Speech-to-text      | Deepgram                                                 | Fast, accurate transcription on the voice hot path               |
-| Text-to-speech      | ElevenLabs                                               | Natural spoken responses                                         |
-| Realtime transport  | Socket.io                                                | Bidirectional streaming of audio turns + captions                |
-| Backend             | Express 5, TypeScript (strict)                           | Flat, predictable, no-service-layer API                          |
-| Database / ORM      | PostgreSQL + Prisma 7                                    | Typed data access behind a single `data/` boundary               |
-| Call recording      | ffmpeg (merge) + AWS S3 (storage)                        | One MP3 per call; optional infra, degrades gracefully            |
-| Emergency alerts    | Resend (email)                                           | Immediate escalation, decoupled from detection                   |
-| Frontend            | Next.js 16, React 19, Tailwind v4, TanStack Query        | App-Router UI with disciplined server-state handling             |
-| Auth                | Better Auth (email + password, single admin)             | Session-gated dashboard; public landing page                     |
-| Monorepo / tooling  | Turborepo + pnpm workspaces                              | Shared contract + configs, cached tasks                          |
+| Layer                     | Technology                                               | Why                                                              |
+| ------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------- |
+| Agent orchestration       | LangGraph.js `StateGraph` + `@langchain/openai` (OpenAI) | Explicit, inspectable multi-agent routing with per-session state |
+| Retrieval (RAG)           | Pinecone + LangChain embeddings/text-splitters           | Answers grounded in the clinic's own documents                   |
+| Speech-to-text            | Deepgram                                                 | Fast, accurate transcription on the voice hot path               |
+| Text-to-speech            | ElevenLabs                                               | Natural spoken responses                                         |
+| Realtime transport        | Socket.io                                                | Bidirectional streaming of audio turns + captions                |
+| Backend                   | Express 5, TypeScript (strict)                           | Flat, predictable, no-service-layer API                          |
+| Database / ORM            | PostgreSQL + Prisma 7                                    | Typed data access behind a single `data/` boundary               |
+| Call recording            | ffmpeg (merge) + AWS S3 (storage)                        | One MP3 per call; optional infra, degrades gracefully            |
+| Emails (alerts + booking) | Resend (email)                                           | Emergency escalation + branded booking confirmations             |
+| Frontend                  | Next.js 16, React 19, Tailwind v4, TanStack Query        | App-Router UI with disciplined server-state handling             |
+| Auth                      | Better Auth (email + password, single admin)             | Session-gated dashboard; public landing page                     |
+| Monorepo / tooling        | Turborepo + pnpm workspaces                              | Shared contract + configs, cached tasks                          |
 
 ---
 

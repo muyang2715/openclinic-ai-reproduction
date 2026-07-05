@@ -7,11 +7,14 @@ import { sendSuccess, sendError } from "../helpers/apiResponse";
 // chat — runs one turn through the multi-agent supervisor and returns the reply.
 export const chat = async (req: Request, res: Response) => {
   try {
-    const { sessionId, message, patientName } = agentChatSchema.parse(req.body);
+    const { sessionId, message, patientName, email } = agentChatSchema.parse(
+      req.body,
+    );
     const result = await runAgent({
       sessionId,
       message,
       ...(patientName ? { patientName } : {}),
+      ...(email ? { email } : {}),
     });
     return sendSuccess(res, 200, "Agent replied successfully", result);
   } catch (error) {

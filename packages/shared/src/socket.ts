@@ -27,6 +27,8 @@ export type SocketEventName = (typeof SocketEvent)[keyof typeof SocketEvent];
 export const AUDIO_TIMESLICE_MS = 250;
 export const AUDIO_MIME = "audio/webm;codecs=opus";
 
+/** Caller details collected by the pre-call form and sent with `call:start`. */
+export type CallStartPayload = { patientName: string; email: string };
 export type CallReadyPayload = { callId: string };
 export type CallErrorPayload = { message: string };
 export type TranscriptFinalPayload = { text: string };
@@ -48,7 +50,8 @@ export interface ServerToClientEvents {
 
 /** Events the client emits to the server. */
 export interface ClientToServerEvents {
-  "call:start": () => void;
+  /** Starts the call; carries the caller's name/email from the pre-call form. */
+  "call:start": (payload: CallStartPayload) => void;
   /** Binary mic audio (webm/opus). Arrives as a Buffer on the server. */
   "audio:chunk": (chunk: ArrayBuffer) => void;
   "user:turn-end": () => void;

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 
 export function CallFab() {
-  const { isOpen, startCall } = useCall();
+  const { isOpen, openForm } = useCall();
   const reduceMotion = useReducedMotion();
 
   return (
@@ -28,7 +28,7 @@ export function CallFab() {
             <TooltipTrigger asChild>
               <button
                 type="button"
-                onClick={startCall}
+                onClick={openForm}
                 aria-label="Talk to the AI receptionist"
                 className="relative flex size-14 items-center justify-center rounded-full bg-brand-gradient text-white shadow-soft-lg transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
               >

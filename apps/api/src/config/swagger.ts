@@ -40,13 +40,31 @@ const options: swaggerJSDoc.Options = {
     servers: [{ url: `http://localhost:${PORT ?? 4000}` }],
     tags: [
       { name: "Doctors", description: "Doctor management endpoints" },
-      { name: "Schedules", description: "Doctor weekly availability endpoints" },
+      {
+        name: "Schedules",
+        description: "Doctor weekly availability endpoints",
+      },
       { name: "Appointments", description: "Patient appointment endpoints" },
-      { name: "Exceptions", description: "Doctor availability exception endpoints" },
-      { name: "Analytics", description: "Aggregated dashboard & analytics data" },
-      { name: "Knowledge Base", description: "RAG document upload & management" },
-      { name: "Agent", description: "Multi-agent receptionist (FAQ / appointment / emergency)" },
-      { name: "Calls", description: "Voice call history, transcripts & recordings" },
+      {
+        name: "Exceptions",
+        description: "Doctor availability exception endpoints",
+      },
+      {
+        name: "Analytics",
+        description: "Aggregated dashboard & analytics data",
+      },
+      {
+        name: "Knowledge Base",
+        description: "RAG document upload & management",
+      },
+      {
+        name: "Agent",
+        description: "Multi-agent receptionist (FAQ / appointment / emergency)",
+      },
+      {
+        name: "Calls",
+        description: "Voice call history, transcripts & recordings",
+      },
     ],
     components: {
       schemas: {
@@ -122,6 +140,7 @@ const options: swaggerJSDoc.Options = {
             id: { type: "string" },
             doctorId: { type: "string" },
             patientName: { type: "string" },
+            patientEmail: { type: "string", nullable: true },
             startTime: { type: "string", format: "date-time" },
             endTime: { type: "string", format: "date-time" },
             status: appointmentStatus,
@@ -144,6 +163,7 @@ const options: swaggerJSDoc.Options = {
           properties: {
             doctorId: { type: "string" },
             patientName: { type: "string" },
+            patientEmail: { type: "string" },
             startTime: { type: "string", format: "date-time" },
             endTime: { type: "string", format: "date-time" },
             status: appointmentStatus,
@@ -154,6 +174,7 @@ const options: swaggerJSDoc.Options = {
           type: "object",
           properties: {
             patientName: { type: "string" },
+            patientEmail: { type: "string" },
             startTime: { type: "string", format: "date-time" },
             endTime: { type: "string", format: "date-time" },
             status: appointmentStatus,
@@ -232,8 +253,12 @@ const options: swaggerJSDoc.Options = {
           required: ["sessionId", "message"],
           properties: {
             sessionId: { type: "string", example: "session-1" },
-            message: { type: "string", example: "What are your opening hours?" },
+            message: {
+              type: "string",
+              example: "What are your opening hours?",
+            },
             patientName: { type: "string", example: "John Doe" },
+            email: { type: "string", example: "john@example.com" },
           },
         },
         Call: {
@@ -326,7 +351,12 @@ const options: swaggerJSDoc.Options = {
             {
               in: "query",
               name: "limit",
-              schema: { type: "integer", default: 10, minimum: 1, maximum: 100 },
+              schema: {
+                type: "integer",
+                default: 10,
+                minimum: 1,
+                maximum: 100,
+              },
             },
             {
               in: "query",
@@ -404,7 +434,9 @@ const options: swaggerJSDoc.Options = {
           },
           responses: {
             201: { description: "Schedule created successfully" },
-            400: { description: "Validation failed or invalid doctor reference" },
+            400: {
+              description: "Validation failed or invalid doctor reference",
+            },
           },
         },
       },
@@ -482,7 +514,9 @@ const options: swaggerJSDoc.Options = {
           },
           responses: {
             201: { description: "Appointment created successfully" },
-            400: { description: "Validation failed or invalid doctor reference" },
+            400: {
+              description: "Validation failed or invalid doctor reference",
+            },
           },
         },
       },
@@ -499,7 +533,12 @@ const options: swaggerJSDoc.Options = {
             {
               in: "query",
               name: "limit",
-              schema: { type: "integer", default: 10, minimum: 1, maximum: 100 },
+              schema: {
+                type: "integer",
+                default: 10,
+                minimum: 1,
+                maximum: 100,
+              },
             },
             { in: "query", name: "doctorId", schema: { type: "string" } },
             { in: "query", name: "status", schema: appointmentStatus },
@@ -574,7 +613,9 @@ const options: swaggerJSDoc.Options = {
           },
           responses: {
             201: { description: "Exception created successfully" },
-            400: { description: "Validation failed or invalid doctor reference" },
+            400: {
+              description: "Validation failed or invalid doctor reference",
+            },
             409: { description: "An exception already exists for that date" },
           },
         },

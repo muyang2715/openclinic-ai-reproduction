@@ -24,9 +24,13 @@ export type CallStatus = "idle" | "connecting" | "live";
 
 export type Caption = { id: number; role: "user" | "agent"; text: string };
 
+/** Caller details collected by the pre-call form. */
+export type CallerDetails = { name: string; email: string };
+
 export type CallContextValue = {
   status: CallStatus;
   isOpen: boolean;
+  formOpen: boolean;
   userSpeaking: boolean;
   agentSpeaking: boolean;
   processing: boolean;
@@ -34,7 +38,9 @@ export type CallContextValue = {
   muted: boolean;
   error: string | null;
   transcript: Caption[];
-  startCall: () => void;
+  openForm: () => void;
+  closeForm: () => void;
+  startCall: (patient: CallerDetails) => void;
   endCall: () => void;
   toggleMute: () => void;
 };
@@ -43,6 +49,7 @@ export const CallContext = createContext<CallContextValue | null>(null);
 
 export function CallProvider({ children }: { children: React.ReactNode }) {
   const [status, setStatus] = useState<CallStatus>("idle");
+  const [formOpen, setFormOpen] = useState(false);
   const [userSpeaking, setUserSpeaking] = useState(false);
   const [agentSpeaking, setAgentSpeaking] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -186,56 +193,71 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
-  const startCall = useCallback(async () => {
+  const openForm = useCallback(() => {
     if (status !== "idle") return;
-    setStatus("connecting");
     setError(null);
-    setTranscript([]);
+    setFormOpen(true);
+  }, [status]);
 
-    let stream: MediaStream;
-    try {
-      stream = await requestMic();
-    } catch {
-      setError("Microphone access is required to start a call.");
-      toast.error("Microphone access is required to start a call.");
-      setStatus("idle");
-      return;
-    }
-    streamRef.current = stream;
-    audioElRef.current = new Audio();
+  const closeForm = useCallback(() => setFormOpen(false), []);
 
-    const socket = createCallSocket();
-    socketRef.current = socket;
+  const startCall = useCallback(
+    async (patient: CallerDetails) => {
+      if (status !== "idle") return;
+      setFormOpen(false);
+      setStatus("connecting");
+      setError(null);
+      setTranscript([]);
 
-    socket.on(SocketEvent.CallReady, () => {
-      setStatus("live");
-      beginStreaming(socket, stream);
-    });
-    socket.on(SocketEvent.TranscriptFinal, ({ text }) => {
-      addCaption("user", text);
-    });
-    socket.on(SocketEvent.AgentResponse, ({ text }) => {
-      addCaption("agent", text);
-    });
-    socket.on(SocketEvent.TtsAudio, (audio) => {
-      enqueueAudio(audio);
-    });
-    socket.on(SocketEvent.CallError, ({ message }) => {
-      // A failed turn should NOT end the call — just surface it.
-      setProcessing(false);
-      toast.error(message);
-    });
-    socket.on("connect", () => {
-      socket.emit(SocketEvent.CallStart);
-    });
-    socket.on("connect_error", () => {
-      setError("Couldn't connect to the call server.");
-      toast.error("Couldn't connect to the call server.");
-      endCall();
-    });
+      let stream: MediaStream;
+      try {
+        stream = await requestMic();
+      } catch {
+        setError("Microphone access is required to start a call.");
+        toast.error("Microphone access is required to start a call.");
+        setStatus("idle");
+        return;
+      }
+      streamRef.current = stream;
+      audioElRef.current = new Audio();
 
-    socket.connect();
-  }, [status, beginStreaming, addCaption, enqueueAudio, endCall]);
+      const socket = createCallSocket();
+      socketRef.current = socket;
+
+      socket.on(SocketEvent.CallReady, () => {
+        setStatus("live");
+        beginStreaming(socket, stream);
+      });
+      socket.on(SocketEvent.TranscriptFinal, ({ text }) => {
+        addCaption("user", text);
+      });
+      socket.on(SocketEvent.AgentResponse, ({ text }) => {
+        addCaption("agent", text);
+      });
+      socket.on(SocketEvent.TtsAudio, (audio) => {
+        enqueueAudio(audio);
+      });
+      socket.on(SocketEvent.CallError, ({ message }) => {
+        // A failed turn should NOT end the call — just surface it.
+        setProcessing(false);
+        toast.error(message);
+      });
+      socket.on("connect", () => {
+        socket.emit(SocketEvent.CallStart, {
+          patientName: patient.name,
+          email: patient.email,
+        });
+      });
+      socket.on("connect_error", () => {
+        setError("Couldn't connect to the call server.");
+        toast.error("Couldn't connect to the call server.");
+        endCall();
+      });
+
+      socket.connect();
+    },
+    [status, beginStreaming, addCaption, enqueueAudio, endCall],
+  );
 
   const toggleMute = useCallback(() => {
     setMuted((prev) => {
@@ -251,6 +273,7 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
     () => ({
       status,
       isOpen: status !== "idle",
+      formOpen,
       userSpeaking,
       agentSpeaking,
       processing,
@@ -258,12 +281,15 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
       muted,
       error,
       transcript,
+      openForm,
+      closeForm,
       startCall,
       endCall,
       toggleMute,
     }),
     [
       status,
+      formOpen,
       userSpeaking,
       agentSpeaking,
       processing,
@@ -271,6 +297,8 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
       muted,
       error,
       transcript,
+      openForm,
+      closeForm,
       startCall,
       endCall,
       toggleMute,

@@ -7,6 +7,7 @@ export type RunAgentInput = {
   sessionId: string;
   message: string;
   patientName?: string;
+  email?: string;
 };
 
 export type RunAgentResult = {
@@ -25,6 +26,7 @@ export const runAgent = async (
       messages: [new HumanMessage(input.message)],
       sessionId: input.sessionId,
       ...(input.patientName ? { patientName: input.patientName } : {}),
+      ...(input.email ? { email: input.email } : {}),
     },
     { configurable: { thread_id: input.sessionId } },
   );

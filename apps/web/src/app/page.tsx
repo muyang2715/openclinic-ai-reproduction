@@ -13,6 +13,7 @@ import { Footer } from "@/components/landing/footer";
 import { CallProvider } from "@/context/call-provider";
 import { CallFab } from "@/components/call/call-fab";
 import { CallOverlay } from "@/components/call/call-overlay";
+import { PreCallDialog } from "@/components/call/pre-call-dialog";
 
 export const metadata: Metadata = {
   title: "OpenClinic AI — AI Receptionist for Modern Healthcare",
@@ -37,6 +38,7 @@ export default function LandingPage() {
         </main>
         <Footer />
       </div>
+      <PreCallDialog />
       <CallFab />
       <CallOverlay />
     </CallProvider>

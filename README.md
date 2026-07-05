@@ -62,7 +62,9 @@ skin for healthcare, and could just as easily point at another industry.
 - 📚 **RAG knowledge base** — answers questions **only** from the clinic's own uploaded documents
   (PDF / DOCX / TXT → embeddings → Pinecone). Never invents facts.
 - 📅 **Appointment booking via tools** — the agent looks up doctors, checks schedules for conflicts, and books
-  through the same data layer a human admin uses.
+  through the same data layer a human admin uses, then emails the caller a **branded confirmation** (Resend).
+- 🙋 **Personalized calls** — a pre-call form collects the caller's name + email; the agent greets them by name
+  and remembers it for the whole conversation.
 - 🚨 **Emergency escalation** — detects critical situations and emails the clinic immediately (Resend).
 - 📊 **Admin dashboard** — manage doctors, schedules, appointments, analytics, and the knowledge base.
 - 📞 **Call recording & history** — merges call audio (ffmpeg) to S3 and stores full transcripts, with
@@ -202,7 +204,7 @@ pnpm --filter api migrate:deploy         # apply committed migrations
 
 # 5. Create Better Auth tables + seed the admin (from the frontend)
 pnpm --filter web exec @better-auth/cli migrate   # creates user/session/account/verification tables
-pnpm -F web seed:admin                            # creates admin@openclinic.com / Password@123
+pnpm -F web seed:admin                            # creates the admin from ADMIN_EMAIL / ADMIN_PASSWORD in apps/web/.env
 
 # 6. Run everything in watch mode
 pnpm dev
@@ -212,7 +214,7 @@ pnpm dev
 - API → http://localhost:5500
 - API docs (Swagger) → http://localhost:5500/api-docs
 
-> **Default admin credentials (dev):** `admin@openclinic.com` / `Password@123` — change these before deploying.
+> **Admin login:** set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `apps/web/.env` before running the seed. Use a strong, unique password — this is the only admin account.
 
 ---
 
@@ -256,27 +258,29 @@ Full templates live in [`apps/api/.env.example`](./apps/api/.env.example) and
 
 ### Backend — `apps/api/.env`
 
-| Variable                                                                   | Required | Purpose                                               |
-| -------------------------------------------------------------------------- | -------- | ----------------------------------------------------- |
-| `DATABASE_URL`                                                             | ✅       | PostgreSQL connection string                          |
-| `PORT`                                                                     | ✅       | API port (e.g. `5500`)                                |
-| `WEB_ORIGIN`                                                               | ✅       | Allowed CORS origin (default `http://localhost:3000`) |
-| `OPENAI_API_KEY`                                                           | ✅       | Agent LLM + RAG embeddings                            |
-| `PINECONE_API_KEY` / `PINECONE_INDEX`                                      | ✅       | RAG vector store                                      |
-| `DEEPGRAM_API_KEY`                                                         | ✅       | Speech-to-text                                        |
-| `ELEVENLABS_API_KEY` / `ELEVENLABS_VOICE_ID`                               | ✅       | Text-to-speech                                        |
-| `RESEND_API_KEY` / `RESEND_FROM` / `EMERGENCY_EMAIL`                       | ⚪       | Emergency email alerts (no-ops if unset)              |
-| `AWS_REGION` / `S3_BUCKET` / `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | ⚪       | Call-recording storage (degrades to transcript-only)  |
+| Variable                                                                   | Required | Purpose                                                            |
+| -------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------ |
+| `DATABASE_URL`                                                             | ✅       | PostgreSQL connection string                                       |
+| `PORT`                                                                     | ✅       | API port (e.g. `5500`)                                             |
+| `WEB_ORIGIN`                                                               | ✅       | Allowed CORS origin (default `http://localhost:3000`)              |
+| `OPENAI_API_KEY`                                                           | ✅       | Agent LLM + RAG embeddings                                         |
+| `PINECONE_API_KEY` / `PINECONE_INDEX`                                      | ✅       | RAG vector store                                                   |
+| `DEEPGRAM_API_KEY`                                                         | ✅       | Speech-to-text                                                     |
+| `ELEVENLABS_API_KEY` / `ELEVENLABS_VOICE_ID`                               | ✅       | Text-to-speech                                                     |
+| `RESEND_API_KEY` / `RESEND_FROM` / `EMERGENCY_EMAIL`                       | ⚪       | Emergency alerts + booking confirmation emails (no-ops if unset)   |
+| `CLINIC_NAME`                                                              | ⚪       | Clinic name shown in confirmation emails (default `OpenClinic AI`) |
+| `AWS_REGION` / `S3_BUCKET` / `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | ⚪       | Call-recording storage (degrades to transcript-only)               |
 
 ### Frontend — `apps/web/.env`
 
-| Variable                 | Required | Purpose                                         |
-| ------------------------ | -------- | ----------------------------------------------- |
-| `NEXT_PUBLIC_API_URL`    | ✅       | Base URL of the API                             |
-| `NEXT_PUBLIC_SOCKET_URL` | ✅       | Socket.io server URL                            |
-| `DATABASE_URL`           | ✅       | Same DB as the API (Better Auth tables)         |
-| `BETTER_AUTH_SECRET`     | ✅       | Session signing secret (`openssl rand -hex 32`) |
-| `BETTER_AUTH_URL`        | ✅       | Base URL of the web app                         |
+| Variable                         | Required | Purpose                                                           |
+| -------------------------------- | -------- | ----------------------------------------------------------------- |
+| `NEXT_PUBLIC_API_URL`            | ✅       | Base URL of the API                                               |
+| `NEXT_PUBLIC_SOCKET_URL`         | ✅       | Socket.io server URL                                              |
+| `DATABASE_URL`                   | ✅       | Same DB as the API (Better Auth tables)                           |
+| `BETTER_AUTH_SECRET`             | ✅       | Session signing secret (`openssl rand -hex 32`)                   |
+| `BETTER_AUTH_URL`                | ✅       | Base URL of the web app                                           |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | ⚪       | Seed only — the admin account created by `pnpm -F web seed:admin` |
 
 ---
 
@@ -286,6 +290,7 @@ Full templates live in [`apps/api/.env.example`](./apps/api/.env.example) and
   how it's engineered.
 - [`docs/coding-standards.md`](./docs/coding-standards.md) — conventions and patterns for contributors.
 - [`CLAUDE.md`](./CLAUDE.md) — repo wiring reference (commands, workspace layout, Prisma setup).
+- [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md) — deploy to AWS EC2 (Nginx + PM2 + GitHub Actions CI/CD).
 
 ---
 

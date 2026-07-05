@@ -13,16 +13,10 @@ import {
 } from "../config/agents";
 import { chatModel } from "../libs/chatModel";
 import {
-  bookAppointmentTool,
   listDoctorsTool,
+  makeBookAppointmentTool,
 } from "./tools/appointment.tools";
 import { messageText, type AgentStateType } from "./state";
-
-const tools = [listDoctorsTool, bookAppointmentTool];
-const toolsByName: Record<string, StructuredToolInterface> = {
-  list_doctors: listDoctorsTool,
-  book_appointment: bookAppointmentTool,
-};
 
 const FALLBACK =
   "I can help you book an appointment — could you tell me the doctor or speciality, your name, and a preferred date and time?";
@@ -36,11 +30,27 @@ export const appointmentNode = async (
     APPOINTMENT_SYSTEM_PROMPT,
   ).format({ now: new Date().toISOString() });
 
+  // Build the booking tool per turn so it closes over this caller's form-provided
+  // name/email (the confirmation email always goes to the right address).
+  const bookAppointmentTool = makeBookAppointmentTool({
+    ...(state.patientName ? { patientName: state.patientName } : {}),
+    ...(state.email ? { patientEmail: state.email } : {}),
+  });
+  const tools = [listDoctorsTool, bookAppointmentTool];
+  const toolsByName: Record<string, StructuredToolInterface> = {
+    list_doctors: listDoctorsTool,
+    book_appointment: bookAppointmentTool,
+  };
+
   const llm = chatModel().bindTools(tools);
 
   // Seed with prior conversation (already includes the latest user message).
   const working: BaseMessage[] = [
-    new SystemMessage(state.patientName ? `${system}\nPatient name: ${state.patientName}` : system),
+    new SystemMessage(
+      state.patientName
+        ? `${system}\nPatient name: ${state.patientName}`
+        : system,
+    ),
     ...state.messages,
   ];
   const produced: BaseMessage[] = [];

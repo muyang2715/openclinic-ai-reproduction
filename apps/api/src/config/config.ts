@@ -16,6 +16,9 @@ export const RESEND_FROM = process.env.RESEND_FROM ?? "onboarding@resend.dev";
 
 export const EMERGENCY_EMAIL = process.env.EMERGENCY_EMAIL ?? "";
 
+// Clinic display name used to brand outgoing emails (booking confirmations).
+export const CLINIC_NAME = process.env.CLINIC_NAME ?? "OpenClinic AI";
+
 export const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY ?? "";
 
 export const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY ?? "";

@@ -6,14 +6,22 @@ import nextEnv from "@next/env";
 nextEnv.loadEnvConfig(process.cwd());
 process.env.BETTER_AUTH_ALLOW_SIGNUP = "true";
 
-const ADMIN_NAME = "Admin";
-const ADMIN_EMAIL = "admin@openclinic.com";
-const ADMIN_PASSWORD = "Password@123";
+const ADMIN_NAME = process.env.ADMIN_NAME ?? "Admin";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 async function main() {
   if (!process.env.DATABASE_URL || !process.env.BETTER_AUTH_SECRET) {
     console.error(
       "DATABASE_URL and BETTER_AUTH_SECRET must be set in apps/web/.env before seeding.",
+    );
+    process.exit(1);
+  }
+
+  if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
+    console.error(
+      "ADMIN_EMAIL and ADMIN_PASSWORD must be set in apps/web/.env before seeding. " +
+        "Choose a strong, unique password — this is the single admin account.",
     );
     process.exit(1);
   }
@@ -28,9 +36,7 @@ async function main() {
         password: ADMIN_PASSWORD,
       },
     });
-    console.log(
-      `Admin created: ${ADMIN_EMAIL}\nPassword: ${ADMIN_PASSWORD}`,
-    );
+    console.log(`Admin created: ${ADMIN_EMAIL}`);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     if (/exist|already/i.test(message)) {

@@ -50,7 +50,9 @@
       "Bash(rm -rf d:/AI/open-clinic-ai/packages/ui d:/AI/open-clinic-ai/packages/eslint-config/react-internal.js d:/AI/open-clinic-ai/packages/typescript-config/react-library.json)",
       "Bash(pnpm lint *)",
       "Bash(pnpm check-types *)",
-      "Bash(pnpm build *)"
+      "Bash(pnpm build *)",
+      "Bash(pnpm --filter web check-types)",
+      "Bash(pnpm --filter web lint)"
     ],
     "additionalDirectories": [
       "d:\\AI\\open-clinic-ai\\packages\\ui"

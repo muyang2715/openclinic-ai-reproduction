@@ -1,12 +1,21 @@
 import { Resend } from "resend";
 
 import {
+  CLINIC_NAME,
   EMERGENCY_EMAIL,
   RESEND_API_KEY,
   RESEND_FROM,
 } from "../config/config";
 
 const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
+
+// Minimal HTML escaping — names/reason come from callers, so never interpolate raw.
+const escapeHtml = (value: string): string =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 
 // Sends the emergency alert to the clinic owner. Side-effect lives here (§7);
 // the emergency agent only decides *that* an alert is warranted. No-ops with a
@@ -43,6 +52,118 @@ export const sendEmergencyAlert = async (input: {
     return true;
   } catch (error) {
     console.error("[mailer] failed to send emergency alert", error);
+    return false;
+  }
+};
+
+// Format an appointment date-time in a human, readable way (e.g.
+// "Friday, July 10, 2026 at 3:00 PM"). Server timezone is used as-is.
+const formatWhen = (date: Date): string =>
+  new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+
+// Sends the caller a branded booking confirmation after a successful booking.
+// Guarded/no-throw like sendEmergencyAlert — a missing key or address never
+// breaks the call; the appointment is already persisted regardless.
+export const sendAppointmentConfirmation = async (input: {
+  to: string;
+  patientName: string;
+  doctorName: string;
+  speciality?: string;
+  startTime: Date;
+  endTime: Date;
+  durationMinutes: number;
+  reason?: string;
+}): Promise<boolean> => {
+  if (!resend || !input.to) {
+    console.warn(
+      "[mailer] booking confirmation skipped — RESEND_API_KEY or recipient not set",
+    );
+    return false;
+  }
+
+  const patient = escapeHtml(input.patientName);
+  const doctor = escapeHtml(input.doctorName);
+  const speciality = input.speciality ? escapeHtml(input.speciality) : "";
+  const when = formatWhen(input.startTime);
+  const reasonRow = input.reason
+    ? `<tr>
+         <td style="padding:6px 0;color:#6b7280;font-size:13px;width:120px">Reason</td>
+         <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:600">${escapeHtml(input.reason)}</td>
+       </tr>`
+    : "";
+
+  const html = `
+  <div style="margin:0;padding:0;background:#f3f4f6">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6;padding:24px 0">
+      <tr><td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,0.08)">
+          <!-- Header -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#ec4899,#8b5cf6);padding:28px 32px">
+              <div style="color:#ffffff;font-size:18px;font-weight:700;letter-spacing:-0.01em">${escapeHtml(CLINIC_NAME)}</div>
+              <div style="color:rgba(255,255,255,0.85);font-size:13px;margin-top:2px">Appointment confirmation</div>
+            </td>
+          </tr>
+          <!-- Body -->
+          <tr>
+            <td style="padding:32px">
+              <span style="display:inline-block;background:#ecfdf5;color:#059669;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px">✓ Booking confirmed</span>
+              <h1 style="margin:16px 0 6px;font-size:22px;line-height:1.3;color:#111827">You're all set, ${patient}!</h1>
+              <p style="margin:0 0 24px;font-size:14px;line-height:1.6;color:#6b7280">
+                Your appointment has been booked. Here are the details:
+              </p>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border:1px solid #eef0f3;border-radius:12px;padding:16px 20px">
+                <tr>
+                  <td style="padding:6px 0;color:#6b7280;font-size:13px;width:120px">Doctor</td>
+                  <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:600">Dr. ${doctor}${speciality ? ` <span style="color:#8b5cf6;font-weight:500">· ${speciality}</span>` : ""}</td>
+                </tr>
+                <tr>
+                  <td style="padding:6px 0;color:#6b7280;font-size:13px">When</td>
+                  <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:600">${when}</td>
+                </tr>
+                <tr>
+                  <td style="padding:6px 0;color:#6b7280;font-size:13px">Duration</td>
+                  <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:600">${input.durationMinutes} minutes</td>
+                </tr>
+                ${reasonRow}
+              </table>
+
+              <p style="margin:24px 0 0;font-size:13px;line-height:1.6;color:#6b7280">
+                Need to reschedule or cancel? Just call us back and our assistant will help you out.
+              </p>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="padding:20px 32px;border-top:1px solid #eef0f3">
+              <p style="margin:0;font-size:12px;color:#9ca3af">
+                This confirmation was sent by the ${escapeHtml(CLINIC_NAME)} AI receptionist. Please do not reply to this email.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td></tr>
+    </table>
+  </div>`;
+
+  try {
+    await resend.emails.send({
+      from: RESEND_FROM,
+      to: input.to,
+      subject: `Appointment confirmed with Dr. ${input.doctorName} — ${CLINIC_NAME}`,
+      html,
+    });
+    return true;
+  } catch (error) {
+    console.error("[mailer] failed to send booking confirmation", error);
     return false;
   }
 };

@@ -5,7 +5,10 @@
     "DATABASE_URL",
     "BETTER_AUTH_SECRET",
     "BETTER_AUTH_URL",
-    "BETTER_AUTH_ALLOW_SIGNUP"
+    "BETTER_AUTH_ALLOW_SIGNUP",
+    "ADMIN_NAME",
+    "ADMIN_EMAIL",
+    "ADMIN_PASSWORD"
   ],
   "tasks": {
     "build": {

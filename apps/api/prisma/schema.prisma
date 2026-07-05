@@ -66,8 +66,9 @@ model DoctorSchedule {
 model Appointment {
   id          String            @id @default(cuid())
   doctorId    String
-  doctor      Doctor            @relation(fields: [doctorId], references: [id], onDelete: Restrict)
-  patientName String
+  doctor       Doctor           @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  patientName  String
+  patientEmail String?
   startTime   DateTime
   endTime     DateTime
   status      AppointmentStatus @default(BOOKED)

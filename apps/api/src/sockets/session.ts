@@ -30,11 +30,17 @@ export type CallSession = {
   segments: AudioSegment[];
   transcript: TranscriptEntry[];
   userTurns: number;
+  // Caller details from the pre-call form (optional — old clients may omit them).
+  patientName?: string;
+  email?: string;
 };
 
 const sessions = new Map<string, CallSession>();
 
-export const createSession = (socketId: string): CallSession => {
+export const createSession = (
+  socketId: string,
+  meta?: { patientName?: string; email?: string },
+): CallSession => {
   const session: CallSession = {
     callId: randomUUID(),
     socketId,
@@ -45,6 +51,8 @@ export const createSession = (socketId: string): CallSession => {
     segments: [],
     transcript: [],
     userTurns: 0,
+    ...(meta?.patientName ? { patientName: meta.patientName } : {}),
+    ...(meta?.email ? { email: meta.email } : {}),
   };
   sessions.set(socketId, session);
   return session;
