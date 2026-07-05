@@ -6,7 +6,7 @@ import {
   Boxes,
   Braces,
   Cloud,
-  Container,
+  Cpu,
   Database,
   GitBranch,
   Link2,
@@ -30,7 +30,7 @@ const TECH: { name: string; description: string; icon: LucideIcon }[] = [
   { name: "PostgreSQL", description: "Relational data store", icon: Database },
   { name: "Prisma", description: "Type-safe ORM", icon: Boxes },
   { name: "AWS S3", description: "Recordings & assets", icon: Cloud },
-  { name: "Docker", description: "Containerized deploys", icon: Container },
+  { name: "AWS EC2", description: "Cloud compute hosting", icon: Cpu },
   { name: "GitHub Actions", description: "CI/CD pipelines", icon: GitBranch },
 ];
 

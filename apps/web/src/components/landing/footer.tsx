@@ -1,6 +1,5 @@
 import type { SVGProps } from "react";
 import Link from "next/link";
-import { Globe } from "lucide-react";
 
 import { Logo } from "@/components/layout/logo";
 
@@ -20,6 +19,14 @@ function LinkedinIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+function XIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
+    </svg>
+  );
+}
+
 const NAV = [
   { label: "Features", href: "#features" },
   { label: "How it works", href: "#how-it-works" },
@@ -28,9 +35,13 @@ const NAV = [
 ];
 
 const SOCIALS = [
-  { label: "GitHub", href: "https://github.com", icon: GithubIcon },
-  { label: "LinkedIn", href: "https://linkedin.com", icon: LinkedinIcon },
-  { label: "Portfolio", href: "https://example.com", icon: Globe },
+  { label: "GitHub", href: "https://github.com/hunainasif", icon: GithubIcon },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/hunainasif/",
+    icon: LinkedinIcon,
+  },
+  { label: "X", href: "https://x.com/hunainasif1503", icon: XIcon },
 ];
 
 function Footer() {
