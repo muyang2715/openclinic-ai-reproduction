@@ -2,7 +2,7 @@ import { Document as LCDocument } from "@langchain/core/documents";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 
 import { CHUNK_OVERLAP, CHUNK_SIZE } from "../config/constants";
-import { pineconeIndex } from "../libs/pinecone";
+import { getPineconeIndex } from "../libs/pinecone";
 import { getVectorStore } from "../libs/vectorStore";
 
 // Vector ids are deterministic per document so deletion never touches other docs.
@@ -45,5 +45,5 @@ export const deleteDocumentVectors = async (
   const ids = Array.from({ length: chunkCount }, (_, index) =>
     vectorId(documentId, index),
   );
-  await pineconeIndex.deleteMany(ids);
+  await getPineconeIndex().deleteMany(ids);
 };

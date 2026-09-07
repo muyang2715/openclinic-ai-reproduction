@@ -2,6 +2,7 @@ import {
   SystemMessage,
   ToolMessage,
   isAIMessage,
+  isHumanMessage,
   type BaseMessage,
 } from "@langchain/core/messages";
 import { PromptTemplate } from "@langchain/core/prompts";
@@ -35,6 +36,9 @@ export const appointmentNode = async (
   const bookAppointmentTool = makeBookAppointmentTool({
     ...(state.patientName ? { patientName: state.patientName } : {}),
     ...(state.email ? { patientEmail: state.email } : {}),
+    patientMessages: state.messages
+      .filter(isHumanMessage)
+      .map((message) => messageText(message.content)),
   });
   const tools = [listDoctorsTool, bookAppointmentTool];
   const toolsByName: Record<string, StructuredToolInterface> = {

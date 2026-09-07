@@ -1,8 +1,5 @@
 // Centralized constants for the RAG knowledge base (Rule #1 — no magic values).
 
-export const EMBEDDING_MODEL = "text-embedding-3-small";
-export const EMBEDDING_DIMENSIONS = 1536;
-
 export const CHUNK_SIZE = 1000;
 export const CHUNK_OVERLAP = 200;
 

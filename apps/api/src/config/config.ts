@@ -6,6 +6,20 @@ export const WEB_ORIGIN = process.env.WEB_ORIGIN ?? "http://localhost:3000";
 
 export const OPENAI_API_KEY = process.env.OPENAI_API_KEY ?? "";
 
+export const OPENAI_BASE_URL = process.env.OPENAI_BASE_URL ?? "";
+
+export const OPENAI_CHAT_MODEL = process.env.OPENAI_CHAT_MODEL ?? "gpt-4o";
+
+export const OPENAI_ROUTER_MODEL =
+  process.env.OPENAI_ROUTER_MODEL ?? "gpt-4o-mini";
+
+export const OPENAI_EMBEDDING_MODEL =
+  process.env.OPENAI_EMBEDDING_MODEL ?? "text-embedding-3-small";
+
+export const OPENAI_EMBEDDING_DIMENSIONS = Number(
+  process.env.OPENAI_EMBEDDING_DIMENSIONS ?? 1536,
+);
+
 export const PINECONE_API_KEY = process.env.PINECONE_API_KEY ?? "";
 
 export const PINECONE_INDEX = process.env.PINECONE_INDEX ?? "";

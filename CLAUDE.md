@@ -92,7 +92,7 @@ The **dashboard** (`(app)/*` routes) is gated by **Better Auth** (email + passwo
 - Config lives in `apps/api/prisma.config.ts` (not in `schema.prisma`): it points at `prisma/schema.prisma`, sets the datasource `url` from `env("DATABASE_URL")`, and defines migrations path + seed command (`tsx prisma/seed.ts`).
 - Datasource is **PostgreSQL**; `DATABASE_URL` must be set in `apps/api/.env`.
 - The Prisma client is generated to `apps/api/src/generated/prisma` (gitignored) using the new `prisma-client` generator — import the client from there, not from `@prisma/client`.
-- Run Prisma commands from `apps/api/` (e.g. `pnpm exec prisma migrate dev`, `pnpm exec prisma generate`, `pnpm exec prisma db seed`). The schema defines `Doctor`, `DoctorSchedule`, `Appointment`, and `ScheduleException` (plus the `AppointmentStatus`/`DayOfWeek`/`ScheduleExceptionType` enums); an initial migration exists under `prisma/migrations/`. `prisma/seed.ts` does not exist yet.
+- Run Prisma commands from `apps/api/` (e.g. `pnpm exec prisma migrate dev`, `pnpm exec prisma generate`, `pnpm exec prisma db seed`). The schema defines `Doctor`, `DoctorSchedule`, `Appointment`, and `ScheduleException` (plus the `AppointmentStatus`/`DayOfWeek`/`ScheduleExceptionType` enums); migrations live under `prisma/migrations/`. `prisma/seed.ts` provides idempotent local demo data for doctors, schedules, and appointments.
 
 ## Conventions
 

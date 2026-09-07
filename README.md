@@ -203,7 +203,7 @@ pnpm --filter api migrate:deploy         # apply committed migrations
 # (for local schema changes during development, use: pnpm --filter api migrate:dev)
 
 # 5. Create Better Auth tables + seed the admin (from the frontend)
-pnpm --filter web exec @better-auth/cli migrate   # creates user/session/account/verification tables
+pnpm --dir apps/web dlx @better-auth/cli@latest migrate --yes  # creates auth tables
 pnpm -F web seed:admin                            # creates the admin from ADMIN_EMAIL / ADMIN_PASSWORD in apps/web/.env
 
 # 6. Run everything in watch mode

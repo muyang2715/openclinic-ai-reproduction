@@ -46,7 +46,29 @@ export const listDoctorsTool = tool(
 export type BookAppointmentContext = {
   patientName?: string;
   patientEmail?: string;
+  patientMessages?: string[];
 };
+
+const hasExplicitBookingRequest = (messages: string[]) =>
+  messages.some((message) =>
+    /\b(book|schedule|reserve|confirm|make|set up)\b|\u9884\u7ea6|\u6302\u53f7|\u5e2e\u6211\u7ea6|\u786e\u8ba4/i.test(
+      message,
+    ),
+  );
+
+const hasPatientSuppliedDate = (messages: string[]) =>
+  messages.some((message) =>
+    /\b20\d{2}[-/]\d{1,2}[-/]\d{1,2}\b|\b(today|tomorrow|next\s+(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)|(?:january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2})\b|\u4eca天|\u660e天|\u540e天|\u4e0b周|\d{1,2}\u6708\d{1,2}\u65e5/i.test(
+      message,
+    ),
+  );
+
+const hasPatientSuppliedTime = (messages: string[]) =>
+  messages.some((message) =>
+    /\b(?:[01]?\d|2[0-3]):[0-5]\d\b|\b\d{1,2}(?::[0-5]\d)?\s*(?:a\.?m\.?|p\.?m\.?)\b|(?:\u4e0a午|\u4e0b午|\u665a上|\u4e2d午)?\s*\d{1,2}\s*(?:点|时)(?:\u534a|\d{1,2}\u5206)?/i.test(
+      message,
+    ),
+  );
 
 // Factory: builds the book_appointment tool for one conversation, closing over the
 // caller's form-provided name/email. Rebuilt per invocation in appointment.node.
@@ -70,6 +92,17 @@ export const makeBookAppointmentTool = (ctx: BookAppointmentContext = {}) =>
       // Prefer the form name; fall back to whatever the model supplied.
       const finalName = ctx.patientName ?? patientName;
       if (!finalName) return "I still need the patient's name to book.";
+
+      const patientMessages = ctx.patientMessages ?? [];
+      if (!hasExplicitBookingRequest(patientMessages)) {
+        return "Do not book yet. The patient has not explicitly asked to create or confirm an appointment.";
+      }
+      if (
+        !hasPatientSuppliedDate(patientMessages) ||
+        !hasPatientSuppliedTime(patientMessages)
+      ) {
+        return "Do not book yet. Ask the patient for a specific date and time; never invent either value.";
+      }
 
       // Resolve the doctor by id, else by a name/speciality search.
       let resolvedId = doctorId;

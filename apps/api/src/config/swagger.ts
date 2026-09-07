@@ -39,6 +39,7 @@ const options: swaggerJSDoc.Options = {
     },
     servers: [{ url: `http://localhost:${PORT ?? 4000}` }],
     tags: [
+      { name: "Health", description: "Service readiness endpoint" },
       { name: "Doctors", description: "Doctor management endpoints" },
       {
         name: "Schedules",
@@ -320,6 +321,16 @@ const options: swaggerJSDoc.Options = {
       },
     },
     paths: {
+      "/api/v1/health": {
+        get: {
+          tags: ["Health"],
+          summary: "Check API and PostgreSQL readiness",
+          responses: {
+            200: { description: "API and database are ready" },
+            503: { description: "Database is unavailable" },
+          },
+        },
+      },
       "/api/v1/doctors/createDoctor": {
         post: {
           tags: ["Doctors"],

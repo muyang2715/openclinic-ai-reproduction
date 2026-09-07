@@ -19,11 +19,32 @@ import knowledgeBaseRouter from "./routes/knowledgeBase.routes";
 import agentRouter from "./routes/agent.routes";
 import callsRouter from "./routes/call.routes";
 import { errorHandler } from "./middleware/errorHandler";
+import { prisma } from "./libs/prisma";
 
 const app = express();
 
 app.use(cors({ origin: WEB_ORIGIN }));
 app.use(express.json());
+
+// Lightweight readiness probe for local demos and deployment platforms. A
+// successful response means both the HTTP process and PostgreSQL are ready.
+app.get("/api/v1/health", async (_req, res) => {
+  try {
+    await prisma.$queryRawUnsafe("SELECT 1");
+    return res.status(200).json({
+      success: true,
+      message: "OpenClinic API is healthy",
+      data: { status: "ok", database: "connected" },
+    });
+  } catch (error) {
+    console.error("[health] database check failed", error);
+    return res.status(503).json({
+      success: false,
+      message: "OpenClinic API is not ready",
+      data: { status: "degraded", database: "unavailable" },
+    });
+  }
+});
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

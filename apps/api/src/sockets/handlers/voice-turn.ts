@@ -30,23 +30,25 @@ const speak = async (
   socket.emit(SocketEvent.AgentResponse, { text, route });
   socket.emit(SocketEvent.AgentSpeakingStart);
 
-  const audio = await synthesizeSpeech(text);
-  // Record the agent's side of the conversation for the saved call.
-  appendTranscript(socket.id, { role: "agent", text, at: Date.now() });
-  appendSegment(socket.id, {
-    role: "agent",
-    audio,
-    format: "mp3",
-    at: Date.now(),
-  });
-  // Socket.io sends Buffers as binary; the browser receives an ArrayBuffer.
-  socket.emit(SocketEvent.TtsAudio, audio.buffer.slice(
-    audio.byteOffset,
-    audio.byteOffset + audio.byteLength,
-  ) as ArrayBuffer);
-
-  socket.emit(SocketEvent.AgentSpeakingStop);
-  if (session) session.agentSpeaking = false;
+  try {
+    const audio = await synthesizeSpeech(text);
+    // Record the agent's side of the conversation for the saved call.
+    appendTranscript(socket.id, { role: "agent", text, at: Date.now() });
+    appendSegment(socket.id, {
+      role: "agent",
+      audio,
+      format: "mp3",
+      at: Date.now(),
+    });
+    // Socket.io sends Buffers as binary; the browser receives an ArrayBuffer.
+    socket.emit(SocketEvent.TtsAudio, audio.buffer.slice(
+      audio.byteOffset,
+      audio.byteOffset + audio.byteLength,
+    ) as ArrayBuffer);
+  } finally {
+    socket.emit(SocketEvent.AgentSpeakingStop);
+    if (session) session.agentSpeaking = false;
+  }
 };
 
 // The agent greets the caller as soon as the call connects — by name if known.
@@ -58,6 +60,9 @@ export const sendGreeting = async (
     await speak(socket, greetingFor(patientName), null);
   } catch (error) {
     console.error("[voice] greeting failed", error);
+    socket.emit(SocketEvent.CallError, {
+      message: "Voice output is unavailable. Please try again later.",
+    });
   }
 };
 
