@@ -24,15 +24,12 @@ export function ComingSoon({
       <PageHeader
         title={title}
         description={description}
-        actions={<Badge variant="info">Coming soon</Badge>}
+        actions={<Badge variant="info">即将上线</Badge>}
       />
       <EmptyState
         icon={icon}
         title={emptyTitle ?? `${title} is on the way`}
-        description={
-          emptyDescription ??
-          "We're putting the finishing touches on this module. Check back shortly."
-        }
+        description={emptyDescription ?? "我们正在完善这一模块，敬请稍后查看。"}
       />
     </div>
   );

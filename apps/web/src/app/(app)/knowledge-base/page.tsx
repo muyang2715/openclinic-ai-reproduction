@@ -56,8 +56,8 @@ export default function KnowledgeBasePage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Knowledge Base"
-        description="Upload documents to power the AI receptionist's answers."
+        title="医疗知识库"
+        description="上传院内文档，为智能前台提供可靠的回答依据。"
         actions={<Badge variant="info">RAG</Badge>}
       />
 
@@ -67,7 +67,7 @@ export default function KnowledgeBasePage() {
         <SearchInput
           value={search}
           onValueChange={setSearch}
-          placeholder="Search documents by name..."
+          placeholder="按文档名称搜索…"
           containerClassName="sm:max-w-sm"
         />
       </div>
@@ -82,30 +82,30 @@ export default function KnowledgeBasePage() {
             </div>
             <div className="space-y-1">
               <h3 className="text-base font-semibold text-foreground">
-                Couldn&apos;t load documents
+                暂时无法加载文档
               </h3>
               <p className="text-sm text-muted-foreground">
-                There was a problem reaching the server. Please try again.
+                服务器连接异常，请稍后重试。
               </p>
             </div>
             <Button variant="outline" onClick={() => refetch()}>
-              Retry
+              重试
             </Button>
           </CardContent>
         </Card>
       ) : items.length === 0 ? (
         <EmptyState
           icon={BookOpen}
-          title={hasFilters ? "No documents found" : "No documents yet"}
+          title={hasFilters ? "没有找到匹配的文档" : "暂无知识库文档"}
           description={
             hasFilters
-              ? "Try a different search term."
-              : "Upload your first document above to build the clinic's knowledge base."
+              ? "请尝试其他搜索条件。"
+              : "上传第一份文档，开始构建医院知识库。"
           }
           action={
             hasFilters ? (
               <Button variant="outline" onClick={() => setSearch("")}>
-                Clear search
+                清除搜索
               </Button>
             ) : undefined
           }
@@ -121,8 +121,8 @@ export default function KnowledgeBasePage() {
           />
           <div className="mt-4 flex flex-col items-center justify-between gap-4 sm:flex-row">
             <p className="text-sm text-muted-foreground">
-              Showing {(page - 1) * PAGE_SIZE + 1}–
-              {Math.min(page * PAGE_SIZE, total)} of {total} documents
+              显示第 {(page - 1) * PAGE_SIZE + 1}–
+              {Math.min(page * PAGE_SIZE, total)} 份，共 {total} 份文档
             </p>
             {totalPages > 1 && (
               <Pagination className="mx-0 w-auto justify-end">
@@ -146,7 +146,9 @@ export default function KnowledgeBasePage() {
                   <PaginationItem>
                     <PaginationNext
                       disabled={page === totalPages}
-                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      onClick={() =>
+                        setPage((p) => Math.min(totalPages, p + 1))
+                      }
                     />
                   </PaginationItem>
                 </PaginationContent>

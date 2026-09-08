@@ -18,8 +18,8 @@ import {
 } from "@/components/ui/dialog";
 
 const preCallSchema = z.object({
-  name: z.string().min(2, "Please enter your name"),
-  email: z.string().email("Enter a valid email"),
+  name: z.string().min(2, "请输入患者姓名"),
+  email: z.string().email("请输入有效的邮箱地址"),
 });
 
 type PreCallValues = z.infer<typeof preCallSchema>;
@@ -59,21 +59,20 @@ export function PreCallDialog() {
           <span className="mb-1 flex size-11 items-center justify-center rounded-xl bg-brand-gradient text-white shadow-soft-md">
             <Phone className="size-5" strokeWidth={2.25} />
           </span>
-          <DialogTitle>Start your call</DialogTitle>
+          <DialogTitle>开始智能接待体验</DialogTitle>
           <DialogDescription>
-            Tell us who we&apos;re speaking with. We&apos;ll use your name
-            during the call and email your appointment confirmation.
+            请留下基本信息。智能前台会在体验中称呼您的姓名，并用于发送预约确认。
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
           <div>
             <Label htmlFor="precall-name" className="mb-2 block">
-              Full name
+              患者姓名
             </Label>
             <Input
               id="precall-name"
-              placeholder="Jane Doe"
+              placeholder="请输入姓名"
               autoComplete="name"
               aria-invalid={Boolean(errors.name)}
               {...register("name")}
@@ -87,12 +86,12 @@ export function PreCallDialog() {
 
           <div>
             <Label htmlFor="precall-email" className="mb-2 block">
-              Email
+              联系邮箱
             </Label>
             <Input
               id="precall-email"
               type="email"
-              placeholder="you@example.com"
+              placeholder="name@example.com"
               autoComplete="email"
               aria-invalid={Boolean(errors.email)}
               {...register("email")}
@@ -106,7 +105,7 @@ export function PreCallDialog() {
 
           <Button type="submit" variant="gradient" className="mt-1 w-full">
             <Phone className="size-4" />
-            Start call
+            开始体验
           </Button>
         </form>
       </DialogContent>

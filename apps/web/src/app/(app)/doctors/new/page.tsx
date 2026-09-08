@@ -13,17 +13,17 @@ export default function NewDoctorPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <PageHeader
-        title="Add Doctor"
-        description="Create a new doctor profile for your clinic."
+        title="添加医生"
+        description="创建新的医生档案并配置出诊信息。"
         breadcrumb={
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink href="/doctors">Doctors</BreadcrumbLink>
+                <BreadcrumbLink href="/doctors">医生管理</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>Add Doctor</BreadcrumbPage>
+                <BreadcrumbPage>添加医生</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>

@@ -23,11 +23,11 @@ export function UploadCard() {
     const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
     if (!ALLOWED_EXT.includes(ext)) {
       // Surface client-side; server also validates.
-      toast.error("Only PDF, DOCX, TXT, and MD files are supported.");
+      toast.error("仅支持 PDF、DOCX、TXT 和 MD 文件。");
       return;
     }
     if (file.size > MAX_BYTES) {
-      toast.error("File is too large (max 10 MB).");
+      toast.error("文件过大，最大支持 10 MB。");
       return;
     }
     upload.mutate(file, {
@@ -78,8 +78,8 @@ export function UploadCard() {
           <div className="space-y-1">
             <p className="text-sm font-semibold text-foreground">
               {upload.isPending
-                ? "Processing & embedding document…"
-                : "Drag & drop a document, or click to browse"}
+                ? "正在处理并建立文档向量…"
+                : "拖放文档到这里，或点击选择文件"}
             </p>
             <p className="text-xs text-muted-foreground">
               PDF, DOCX, TXT, or MD — up to 10 MB

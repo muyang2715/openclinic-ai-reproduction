@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { SignInForm } from "./_components/sign-in-form";
 
 export const metadata: Metadata = {
-  title: "Sign in — OpenClinic AI",
+  title: "管理端登录｜OpenClinic AI",
 };
 
 export default function SignInPage() {
@@ -20,9 +20,7 @@ export default function SignInPage() {
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             OpenClinic <span className="text-brand-gradient">AI</span>
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Sign in to your clinic dashboard
-          </p>
+          <p className="text-sm text-muted-foreground">登录医疗服务工作台</p>
         </div>
 
         <SignInForm />

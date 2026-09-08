@@ -9,9 +9,9 @@ import { cn } from "@/lib/utils";
 type OrbState = "listening" | "thinking" | "speaking";
 
 const SEQUENCE: { state: OrbState; label: string; ms: number }[] = [
-  { state: "listening", label: "Listening", ms: 2600 },
-  { state: "thinking", label: "Thinking", ms: 1800 },
-  { state: "speaking", label: "Speaking", ms: 2800 },
+  { state: "listening", label: "正在聆听", ms: 2600 },
+  { state: "thinking", label: "正在理解", ms: 1800 },
+  { state: "speaking", label: "正在回应", ms: 2800 },
 ];
 
 function VoiceOrb({

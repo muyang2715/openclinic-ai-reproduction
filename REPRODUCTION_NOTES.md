@@ -236,6 +236,14 @@ Swagger 是当前仓库的准确接口入口：<http://localhost:5500/api-docs>�
 7. TTS 失败时用 `finally` 必定发送 `agent:speaking:stop` 并重置会话状态，同时给浏览器发可见 `call:error`。
 8. 新增 `/api/v1/health` 数据库 readiness 端点和 Swagger 文档。
 
+# 中文化与医院稳重风格
+
+- 管理端、登录页、落地页、预约/医生/通话/知识库/分析页面，以及语音前台状态提示已统一为简体中文。
+- 视觉系统切换为低饱和灰白背景、深青蓝主色和青绿色强调色，减少营销渐变，强化医院信息系统的可信、克制与可读性。
+- 全局字体加入苹方、冬青黑体和微软雅黑回退链；图标、焦点态、按钮和表格保留原组件结构，避免改变业务流程。
+- 医生姓名、OpenAI、Socket.io 等专有名词以及模型生成的自由文本仍可能保留英文；Agent 回复语言由当前模型/提示词决定，本轮没有改写医疗业务逻辑。
+- 主要入口：`http://localhost:3000/`（产品页）、`http://localhost:3000/sign-in`（管理端登录）。
+
 # 当前已知问题
 
 - **RAG 外部阻塞**：没有 Pinecone Key/Index。且当前 Agnes 中转对 `text-embedding-3-small` 实测返回 HTTP 503 `model_not_found`。要演示 RAG，需额外提供支持 embedding 的 OpenAI 兼容端点以及 Pinecone 配置。

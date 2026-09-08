@@ -23,10 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  DocumentStatusBadge,
-  DocumentTypeBadge,
-} from "./document-type-badge";
+import { DocumentStatusBadge, DocumentTypeBadge } from "./document-type-badge";
 
 type DocumentsTableProps = {
   documents: KbDocument[];
@@ -46,13 +43,13 @@ export function DocumentsTable({
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
-            <TableHead>Document</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Size</TableHead>
-            <TableHead>Chunks</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Uploaded</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>文档</TableHead>
+            <TableHead>类型</TableHead>
+            <TableHead>大小</TableHead>
+            <TableHead>分块</TableHead>
+            <TableHead>状态</TableHead>
+            <TableHead>上传时间</TableHead>
+            <TableHead className="text-right">操作</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -87,8 +84,10 @@ export function DocumentsTable({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className={cn("size-8 text-muted-foreground hover:text-destructive")}
-                  aria-label={`Delete ${document.fileName}`}
+                  className={cn(
+                    "size-8 text-muted-foreground hover:text-destructive",
+                  )}
+                  aria-label={`删除 ${document.fileName}`}
                   onClick={() => setPendingDelete(document)}
                 >
                   <Trash2 className="size-4" />
@@ -105,19 +104,18 @@ export function DocumentsTable({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete document</DialogTitle>
+            <DialogTitle>删除文档</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete{" "}
+              确定删除文档{" "}
               <span className="font-medium text-foreground">
                 {pendingDelete?.fileName}
               </span>
-              ? This removes its embeddings from the knowledge base and cannot be
-              undone.
+              吗？这会同时移除知识库中的向量，且无法撤销。
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setPendingDelete(null)}>
-              Cancel
+              取消
             </Button>
             <Button
               variant="destructive"
@@ -127,7 +125,7 @@ export function DocumentsTable({
                 setPendingDelete(null);
               }}
             >
-              Delete
+              删除
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -35,10 +35,7 @@ export function SignInForm() {
     });
 
     if (signInError) {
-      setError(
-        signInError.message ||
-          "Sign in failed. Please check your email and password.",
-      );
+      setError(signInError.message || "登录失败，请检查邮箱和密码。");
       setSubmitting(false);
       return;
     }
@@ -59,7 +56,7 @@ export function SignInForm() {
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">管理员邮箱</Label>
         <div className="relative">
           <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -69,14 +66,14 @@ export function SignInForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@yourclinic.com"
+            placeholder="admin@yourclinic.com"
             className="pl-9"
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password">登录密码</Label>
         <div className="relative">
           <Lock className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -86,7 +83,7 @@ export function SignInForm() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
+            placeholder="请输入密码"
             className="pl-9"
           />
         </div>
@@ -101,10 +98,10 @@ export function SignInForm() {
         {submitting ? (
           <>
             <Loader2 className="size-4 animate-spin" />
-            Signing in…
+            正在登录…
           </>
         ) : (
-          "Sign in"
+          "登录工作台"
         )}
       </Button>
     </form>

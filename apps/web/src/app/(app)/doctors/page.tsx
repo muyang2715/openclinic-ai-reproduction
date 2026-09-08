@@ -66,13 +66,13 @@ export default function DoctorsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Doctors"
-        description="Manage your clinic's medical staff."
+        title="医生管理"
+        description="维护医院医生信息、专科与出诊安排。"
         actions={
           <Button asChild variant="gradient">
             <Link href="/doctors/new">
               <UserPlus className="size-4" />
-              Add Doctor
+              添加医生
             </Link>
           </Button>
         }
@@ -82,7 +82,7 @@ export default function DoctorsPage() {
         <SearchInput
           value={search}
           onValueChange={setSearch}
-          placeholder="Search by name, specialization, department..."
+          placeholder="按姓名、专科或科室搜索…"
           containerClassName="sm:max-w-sm"
         />
         <div className="sm:ml-auto">
@@ -91,12 +91,12 @@ export default function DoctorsPage() {
             onValueChange={(value) => setStatus(value as StatusFilter)}
           >
             <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Status" />
+              <SelectValue placeholder="状态" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All statuses</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
+              <SelectItem value="all">全部状态</SelectItem>
+              <SelectItem value="active">在岗</SelectItem>
+              <SelectItem value="inactive">停诊</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -112,25 +112,23 @@ export default function DoctorsPage() {
             </div>
             <div className="space-y-1">
               <h3 className="text-base font-semibold text-foreground">
-                Couldn&apos;t load doctors
+                暂时无法加载医生信息
               </h3>
               <p className="text-sm text-muted-foreground">
-                There was a problem reaching the server. Please try again.
+                服务器连接异常，请稍后重试。
               </p>
             </div>
             <Button variant="outline" onClick={() => refetch()}>
-              Retry
+              重试
             </Button>
           </CardContent>
         </Card>
       ) : items.length === 0 ? (
         <EmptyState
           icon={Stethoscope}
-          title={hasFilters ? "No doctors found" : "No doctors yet"}
+          title={hasFilters ? "没有找到匹配的医生" : "暂无医生信息"}
           description={
-            hasFilters
-              ? "Try adjusting your search or filters to find what you're looking for."
-              : "Get started by adding your first doctor to the clinic."
+            hasFilters ? "请调整搜索条件或筛选项。" : "从添加第一位医生开始。"
           }
           action={
             hasFilters ? (
@@ -141,13 +139,13 @@ export default function DoctorsPage() {
                   setStatus("all");
                 }}
               >
-                Clear filters
+                清除筛选
               </Button>
             ) : (
               <Button asChild variant="gradient">
                 <Link href="/doctors/new">
                   <UserPlus className="size-4" />
-                  Add Doctor
+                  添加医生
                 </Link>
               </Button>
             )
@@ -164,8 +162,8 @@ export default function DoctorsPage() {
           />
           <div className="mt-4 flex flex-col items-center justify-between gap-4 sm:flex-row">
             <p className="text-sm text-muted-foreground">
-              Showing {(page - 1) * PAGE_SIZE + 1}–
-              {Math.min(page * PAGE_SIZE, total)} of {total} doctors
+              显示第 {(page - 1) * PAGE_SIZE + 1}–
+              {Math.min(page * PAGE_SIZE, total)} 位医生，共 {total} 位
             </p>
             {totalPages > 1 && (
               <Pagination className="mx-0 w-auto justify-end">
@@ -189,7 +187,9 @@ export default function DoctorsPage() {
                   <PaginationItem>
                     <PaginationNext
                       disabled={page === totalPages}
-                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      onClick={() =>
+                        setPage((p) => Math.min(totalPages, p + 1))
+                      }
                     />
                   </PaginationItem>
                 </PaginationContent>

@@ -50,12 +50,12 @@ export function AppointmentsTable({
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
-            <TableHead>Patient</TableHead>
-            <TableHead>Doctor</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Time</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>患者</TableHead>
+            <TableHead>医生</TableHead>
+            <TableHead>日期</TableHead>
+            <TableHead>时间</TableHead>
+            <TableHead>状态</TableHead>
+            <TableHead className="text-right">操作</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -96,7 +96,7 @@ export function AppointmentsTable({
                       variant="ghost"
                       size="icon"
                       className="size-8"
-                      aria-label={`Actions for ${appointment.patientName}`}
+                      aria-label={`${appointment.patientName} 的操作`}
                     >
                       <MoreHorizontal className="size-4" />
                     </Button>
@@ -104,14 +104,14 @@ export function AppointmentsTable({
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onSelect={() => onEdit(appointment)}>
                       <Pencil className="size-4" />
-                      Edit
+                      编辑
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       variant="destructive"
                       onSelect={() => setPendingDelete(appointment)}
                     >
                       <Trash2 className="size-4" />
-                      Delete
+                      删除
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -127,18 +127,18 @@ export function AppointmentsTable({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete appointment</DialogTitle>
+            <DialogTitle>删除预约</DialogTitle>
             <DialogDescription>
-              Delete the appointment for{" "}
+              确定删除患者{" "}
               <span className="font-medium text-foreground">
                 {pendingDelete?.patientName}
               </span>
-              ? This action cannot be undone.
+              的预约吗？此操作无法撤销。
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setPendingDelete(null)}>
-              Cancel
+              取消
             </Button>
             <Button
               variant="destructive"
@@ -148,7 +148,7 @@ export function AppointmentsTable({
                 setPendingDelete(null);
               }}
             >
-              Delete
+              删除
             </Button>
           </DialogFooter>
         </DialogContent>

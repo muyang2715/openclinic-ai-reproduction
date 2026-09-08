@@ -7,11 +7,7 @@ import { Bell, Menu, Settings } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { SearchInput } from "@/components/ui/search-input";
 import { Button } from "@/components/ui/button";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Sheet,
   SheetContent,
@@ -55,13 +51,13 @@ function Topbar() {
             variant="ghost"
             size="icon"
             className="lg:hidden"
-            aria-label="Open menu"
+            aria-label="打开导航菜单"
           >
             <Menu className="size-5" />
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="w-[280px] p-0">
-          <SheetTitle className="sr-only">Navigation</SheetTitle>
+          <SheetTitle className="sr-only">主导航</SheetTitle>
           <div className="flex h-16 items-center px-6">
             <Logo />
           </div>
@@ -75,7 +71,7 @@ function Topbar() {
         <SearchInput
           value={search}
           onValueChange={setSearch}
-          placeholder="Search doctors, appointments..."
+          placeholder="搜索医生或预约记录…"
           containerClassName="max-w-md"
         />
       </div>
@@ -84,13 +80,13 @@ function Topbar() {
         <Button
           variant="ghost"
           size="icon"
-          aria-label="Notifications"
+          aria-label="通知"
           className="relative"
         >
           <Bell className="size-5" />
           <span className="absolute top-2.5 right-2.5 size-2 rounded-full bg-accent-sky ring-2 ring-surface" />
         </Button>
-        <Button variant="ghost" size="icon" aria-label="Settings">
+        <Button variant="ghost" size="icon" aria-label="系统设置">
           <Settings className="size-5" />
         </Button>
 
@@ -98,7 +94,7 @@ function Topbar() {
           <DropdownMenuTrigger asChild>
             <button
               className="ml-1 flex items-center gap-2 rounded-full focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none"
-              aria-label="Account menu"
+              aria-label="账户菜单"
             >
               <Avatar className="size-9">
                 <AvatarImage src={user?.image ?? ""} alt={displayName} />
@@ -113,13 +109,13 @@ function Topbar() {
                   {displayName}
                 </span>
                 <span className="text-xs font-normal text-muted-foreground">
-                  {email || "Signed in"}
+                  {email || "已登录"}
                 </span>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>个人资料</DropdownMenuItem>
+            <DropdownMenuItem>系统设置</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               variant="destructive"
@@ -131,7 +127,7 @@ function Topbar() {
                 })
               }
             >
-              Sign out
+              退出登录
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

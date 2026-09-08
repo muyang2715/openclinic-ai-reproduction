@@ -19,11 +19,11 @@ import { SectionHeading } from "./section-heading";
 import { VoiceOrb } from "./voice-orb";
 
 const TABS = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "doctors", label: "Doctors", icon: Stethoscope },
-  { id: "appointments", label: "Appointments", icon: CalendarDays },
-  { id: "calls", label: "Calls", icon: PhoneCall },
-  { id: "knowledge", label: "Knowledge Base", icon: BookOpen },
+  { id: "dashboard", label: "工作台", icon: LayoutDashboard },
+  { id: "doctors", label: "医生管理", icon: Stethoscope },
+  { id: "appointments", label: "预约管理", icon: CalendarDays },
+  { id: "calls", label: "通话记录", icon: PhoneCall },
+  { id: "knowledge", label: "医疗知识库", icon: BookOpen },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -83,9 +83,7 @@ function TabPanel({ tab }: { tab: TabId }) {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-xl border border-border bg-surface p-4 sm:col-span-2">
-          <p className="text-xs font-medium text-muted-foreground">
-            Weekly appointments
-          </p>
+          <p className="text-xs font-medium text-muted-foreground">每周预约</p>
           <div className="mt-4 flex h-32 items-end gap-2">
             {[40, 62, 48, 78, 55, 90, 70].map((h, i) => (
               <Bar key={i} h={h} accent={i === 5} />
@@ -94,9 +92,9 @@ function TabPanel({ tab }: { tab: TabId }) {
         </div>
         <div className="flex flex-col gap-3">
           {[
-            { label: "Doctors", value: "24" },
-            { label: "Today", value: "38" },
-            { label: "Resolved by AI", value: "95%" },
+            { label: "医生", value: "24" },
+            { label: "今日预约", value: "38" },
+            { label: "智能解决率", value: "95%" },
           ].map((kpi) => (
             <div
               key={kpi.label}
@@ -120,7 +118,11 @@ function TabPanel({ tab }: { tab: TabId }) {
         rows={[
           { a: "Dr. Sarah Lin", b: "Cardiology · Room 204", tag: "Available" },
           { a: "Dr. Amir Khan", b: "Pediatrics · Room 110", tag: "On duty" },
-          { a: "Dr. Mia Torres", b: "Dermatology · Room 302", tag: "Available" },
+          {
+            a: "Dr. Mia Torres",
+            b: "Dermatology · Room 302",
+            tag: "Available",
+          },
           { a: "Dr. James Park", b: "Neurology · Room 215", tag: "On duty" },
         ]}
       />
@@ -145,9 +147,21 @@ function TabPanel({ tab }: { tab: TabId }) {
     return (
       <div className="flex flex-col gap-3">
         {[
-          { who: "Inbound · +1 (415) 555-0132", sum: "Booked a cardiology visit", dur: "1:24" },
-          { who: "Inbound · +1 (628) 555-0190", sum: "Rescheduled appointment", dur: "0:58" },
-          { who: "Inbound · +1 (510) 555-0177", sum: "Asked about opening hours", dur: "0:41" },
+          {
+            who: "Inbound · +1 (415) 555-0132",
+            sum: "Booked a cardiology visit",
+            dur: "1:24",
+          },
+          {
+            who: "Inbound · +1 (628) 555-0190",
+            sum: "Rescheduled appointment",
+            dur: "0:58",
+          },
+          {
+            who: "Inbound · +1 (510) 555-0177",
+            sum: "Asked about opening hours",
+            dur: "0:41",
+          },
         ].map((call, i) => (
           <div
             key={i}
@@ -201,9 +215,9 @@ function ProductDemo() {
     <section id="voice-demo" className="py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="Product"
-          title="See OpenClinic AI in action"
-          description="One clean console for your team — while the AI handles the front desk."
+          eyebrow="产品体验"
+          title="一眼看懂医院服务全貌"
+          description="一个清晰、克制的管理工作台，让团队专注于患者与医疗服务。"
         />
 
         <Reveal variant="scale" className="mt-14">
@@ -244,10 +258,7 @@ function ProductDemo() {
                         )}
                       >
                         <Icon
-                          className={cn(
-                            "size-4",
-                            active ? "text-primary" : "",
-                          )}
+                          className={cn("size-4", active ? "text-primary" : "")}
                         />
                         {t.label}
                       </button>

@@ -32,9 +32,9 @@ function Testimonials() {
     <section id="testimonials" className="bg-secondary/40 py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="Loved by clinics"
-          title="Trusted by modern practices"
-          description="Teams that switched to an AI front desk — and never looked back."
+          eyebrow="来自一线团队的反馈"
+          title="让患者服务更有温度，也更有秩序"
+          description="把重复咨询交给智能前台，把专业时间还给医护团队。"
         />
 
         <div className="mt-14 grid grid-cols-1 gap-5 lg:grid-cols-3">
@@ -49,10 +49,7 @@ function Testimonials() {
             >
               <div className="flex gap-0.5">
                 {Array.from({ length: 5 }).map((_, s) => (
-                  <Star
-                    key={s}
-                    className="size-4 fill-warning text-warning"
-                  />
+                  <Star key={s} className="size-4 fill-warning text-warning" />
                 ))}
               </div>
               <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-foreground">

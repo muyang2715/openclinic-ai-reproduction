@@ -16,11 +16,11 @@ export type NavItem = {
 };
 
 export const navItems: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Doctors", href: "/doctors", icon: Stethoscope },
-  { label: "Appointments", href: "/appointments", icon: CalendarDays },
-  { label: "Calls", href: "/calls", icon: PhoneCall },
-  { label: "Knowledge Base", href: "/knowledge-base", icon: BookOpen },
-  { label: "Analytics", href: "/analytics", icon: BarChart3 },
-  { label: "Settings", href: "/settings", icon: Settings },
+  { label: "工作台", href: "/dashboard", icon: LayoutDashboard },
+  { label: "医生管理", href: "/doctors", icon: Stethoscope },
+  { label: "预约管理", href: "/appointments", icon: CalendarDays },
+  { label: "通话记录", href: "/calls", icon: PhoneCall },
+  { label: "知识库", href: "/knowledge-base", icon: BookOpen },
+  { label: "运营分析", href: "/analytics", icon: BarChart3 },
+  { label: "系统设置", href: "/settings", icon: Settings },
 ];

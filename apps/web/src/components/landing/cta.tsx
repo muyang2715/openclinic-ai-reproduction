@@ -23,11 +23,11 @@ function CTA() {
 
             <div className="relative">
               <h2 className="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                Ready to modernize your clinic?
+                让医疗服务从一次及时回应开始
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-base text-white/85 sm:text-lg">
-                Start exploring OpenClinic AI today — the AI front desk that
-                never sleeps.
+                了解 OpenClinic AI
+                如何帮助医院承接咨询、管理预约并沉淀服务数据。
               </p>
 
               <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
@@ -38,7 +38,7 @@ function CTA() {
                 >
                   <a href="#voice-demo">
                     <Mic className="size-4" />
-                    Start Voice Demo
+                    体验智能前台
                   </a>
                 </Button>
                 <Button
@@ -48,7 +48,7 @@ function CTA() {
                   className="border-white/40 bg-transparent text-white transition-transform hover:scale-[1.03] hover:bg-white/10 hover:text-white"
                 >
                   <Link href="/dashboard">
-                    Explore Dashboard
+                    查看管理工作台
                     <ArrowRight className="size-4" />
                   </Link>
                 </Button>

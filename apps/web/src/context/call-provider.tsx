@@ -213,8 +213,8 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
       try {
         stream = await requestMic();
       } catch {
-        setError("Microphone access is required to start a call.");
-        toast.error("Microphone access is required to start a call.");
+        setError("需要开启麦克风权限才能开始体验。");
+        toast.error("需要开启麦克风权限才能开始体验。");
         setStatus("idle");
         return;
       }
@@ -249,8 +249,8 @@ export function CallProvider({ children }: { children: React.ReactNode }) {
         });
       });
       socket.on("connect_error", () => {
-        setError("Couldn't connect to the call server.");
-        toast.error("Couldn't connect to the call server.");
+        setError("暂时无法连接智能前台服务。");
+        toast.error("暂时无法连接智能前台服务。");
         endCall();
       });
 

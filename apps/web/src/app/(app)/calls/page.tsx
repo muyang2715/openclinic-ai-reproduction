@@ -49,15 +49,15 @@ export default function CallsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Calls"
-        description="Review call history, recordings, and transcripts."
+        title="通话记录"
+        description="查看患者来电、转写内容与服务记录。"
       />
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <SearchInput
           value={search}
           onValueChange={setSearch}
-          placeholder="Search calls by caller name..."
+          placeholder="按来电姓名搜索…"
           containerClassName="sm:max-w-sm"
         />
       </div>
@@ -65,7 +65,7 @@ export default function CallsPage() {
       {isPending ? (
         <Card>
           <CardContent className="flex items-center justify-center py-16 text-muted-foreground">
-            Loading calls…
+            正在加载通话记录…
           </CardContent>
         </Card>
       ) : isError ? (
@@ -76,30 +76,30 @@ export default function CallsPage() {
             </div>
             <div className="space-y-1">
               <h3 className="text-base font-semibold text-foreground">
-                Couldn&apos;t load calls
+                暂时无法加载通话记录
               </h3>
               <p className="text-sm text-muted-foreground">
-                There was a problem reaching the server. Please try again.
+                服务器连接异常，请稍后重试。
               </p>
             </div>
             <Button variant="outline" onClick={() => refetch()}>
-              Retry
+              重试
             </Button>
           </CardContent>
         </Card>
       ) : items.length === 0 ? (
         <EmptyState
           icon={PhoneCall}
-          title={hasFilters ? "No calls found" : "No calls yet"}
+          title={hasFilters ? "没有找到匹配的通话" : "暂无通话记录"}
           description={
             hasFilters
-              ? "Try a different search term."
-              : "Completed voice calls will appear here with their transcript and recording."
+              ? "请尝试其他搜索条件。"
+              : "完成的语音通话及其转写会显示在这里。"
           }
           action={
             hasFilters ? (
               <Button variant="outline" onClick={() => setSearch("")}>
-                Clear search
+                清除搜索
               </Button>
             ) : undefined
           }
@@ -111,8 +111,8 @@ export default function CallsPage() {
           <CallsTable calls={items} onSelect={setSelected} />
           <div className="mt-4 flex flex-col items-center justify-between gap-4 sm:flex-row">
             <p className="text-sm text-muted-foreground">
-              Showing {(page - 1) * PAGE_SIZE + 1}–
-              {Math.min(page * PAGE_SIZE, total)} of {total} calls
+              显示第 {(page - 1) * PAGE_SIZE + 1}–
+              {Math.min(page * PAGE_SIZE, total)} 条，共 {total} 条通话
             </p>
             {totalPages > 1 && (
               <Pagination className="mx-0 w-auto justify-end">
@@ -136,7 +136,9 @@ export default function CallsPage() {
                   <PaginationItem>
                     <PaginationNext
                       disabled={page === totalPages}
-                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      onClick={() =>
+                        setPage((p) => Math.min(totalPages, p + 1))
+                      }
                     />
                   </PaginationItem>
                 </PaginationContent>

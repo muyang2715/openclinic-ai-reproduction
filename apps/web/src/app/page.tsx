@@ -16,9 +16,9 @@ import { CallOverlay } from "@/components/call/call-overlay";
 import { PreCallDialog } from "@/components/call/pre-call-dialog";
 
 export const metadata: Metadata = {
-  title: "OpenClinic AI — AI Receptionist for Modern Healthcare",
+  title: "OpenClinic AI｜智能医疗前台",
   description:
-    "Automate patient conversations, appointment scheduling, and clinic workflows with a production-ready AI platform powered by Voice AI and multi-agent systems.",
+    "面向医院与诊所的智能前台，承接患者咨询、预约管理、知识库问答与急症分流。",
 };
 
 export default function LandingPage() {

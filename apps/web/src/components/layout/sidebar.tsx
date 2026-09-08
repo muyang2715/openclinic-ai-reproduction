@@ -19,11 +19,11 @@ function Sidebar() {
               <Sparkles className="size-3.5 text-white" />
             </span>
             <span className="text-sm font-semibold text-foreground">
-              AI Receptionist
+              智能医疗前台
             </span>
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            Voice agents arrive in the next release.
+            让每一次患者来电都得到及时、稳妥的回应。
           </p>
         </div>
       </div>

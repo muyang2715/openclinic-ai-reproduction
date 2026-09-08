@@ -18,12 +18,16 @@ const STEPS: {
   detail: string;
   icon: LucideIcon;
 }[] = [
-  { title: "Patient Speaks", detail: "Caller reaches the AI receptionist", icon: Mic },
-  { title: "Deepgram STT", detail: "Speech transcribed in real time", icon: AudioLines },
-  { title: "LangGraph Supervisor", detail: "Routes intent to the right agent", icon: Workflow },
-  { title: "AI Agents", detail: "Appointment & Knowledge agents act", icon: Bot },
-  { title: "Clinic Database", detail: "PostgreSQL + AWS S3 read / write", icon: Database },
-  { title: "ElevenLabs", detail: "Reply synthesized as natural voice", icon: Volume2 },
+  { title: "患者表达", detail: "患者通过语音或文字提出需求", icon: Mic },
+  {
+    title: "实时转写",
+    detail: "将语音准确转换为可理解的内容",
+    icon: AudioLines,
+  },
+  { title: "智能分诊", detail: "识别意图并交给对应的 Agent", icon: Workflow },
+  { title: "业务执行", detail: "完成咨询、预约或急症提醒", icon: Bot },
+  { title: "医疗数据", detail: "与医生、排班和预约数据协同", icon: Database },
+  { title: "清晰回应", detail: "以自然语言与语音返回结果", icon: Volume2 },
 ];
 
 function HowItWorks() {
@@ -34,9 +38,9 @@ function HowItWorks() {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="Architecture"
-          title="How a conversation flows"
-          description="From the first word to a spoken reply — a multi-agent pipeline that books, answers, and acts."
+          eyebrow="工作流程"
+          title="每一次患者请求都清晰可追溯"
+          description="从理解需求、智能分流到业务执行，系统始终保留明确的状态与边界。"
         />
 
         <div className="relative mt-16">
@@ -96,7 +100,7 @@ function HowItWorks() {
               <Volume2 className="size-4" />
             </span>
             <span className="text-sm font-medium text-foreground">
-              Patient hears a natural, accurate response
+              患者得到清晰、准确、负责任的回应
             </span>
           </motion.div>
         </div>

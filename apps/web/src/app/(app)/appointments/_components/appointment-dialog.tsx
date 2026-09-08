@@ -167,13 +167,9 @@ export function AppointmentDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xl">
         <DialogHeader>
-          <DialogTitle>
-            {isEdit ? "Edit appointment" : "New appointment"}
-          </DialogTitle>
+          <DialogTitle>{isEdit ? "编辑预约" : "新建预约"}</DialogTitle>
           <DialogDescription>
-            {isEdit
-              ? "Update the appointment details."
-              : "Book an appointment for a patient."}
+            {isEdit ? "更新预约详情。" : "为患者安排一次预约。"}
           </DialogDescription>
         </DialogHeader>
 
@@ -183,7 +179,7 @@ export function AppointmentDialog({
           className="grid grid-cols-1 gap-5 sm:grid-cols-2"
         >
           <Field
-            label="Doctor"
+            label="医生"
             htmlFor="doctorId"
             error={errors.doctorId?.message}
           >
@@ -195,7 +191,7 @@ export function AppointmentDialog({
                   <SelectTrigger id="doctorId" className="w-full">
                     <SelectValue
                       placeholder={
-                        doctorsQuery.isPending ? "Loading..." : "Select a doctor"
+                        doctorsQuery.isPending ? "加载中…" : "请选择医生"
                       }
                     />
                   </SelectTrigger>
@@ -212,20 +208,20 @@ export function AppointmentDialog({
           </Field>
 
           <Field
-            label="Patient name"
+            label="患者姓名"
             htmlFor="patientName"
             error={errors.patientName?.message}
           >
             <Input
               id="patientName"
-              placeholder="Jane Doe"
+              placeholder="请输入姓名"
               aria-invalid={Boolean(errors.patientName)}
               {...register("patientName")}
             />
           </Field>
 
           <Field
-            label="Date"
+            label="日期"
             htmlFor="date"
             error={errors.date?.message}
             className="sm:col-span-2"
@@ -239,7 +235,7 @@ export function AppointmentDialog({
           </Field>
 
           <Field
-            label="Start time"
+            label="开始时间"
             htmlFor="startTime"
             error={errors.startTime?.message}
           >
@@ -252,7 +248,7 @@ export function AppointmentDialog({
           </Field>
 
           <Field
-            label="End time"
+            label="结束时间"
             htmlFor="endTime"
             error={errors.endTime?.message}
           >
@@ -264,7 +260,7 @@ export function AppointmentDialog({
             />
           </Field>
 
-          <Field label="Status" htmlFor="status" error={errors.status?.message}>
+          <Field label="状态" htmlFor="status" error={errors.status?.message}>
             <Controller
               control={control}
               name="status"
@@ -276,7 +272,14 @@ export function AppointmentDialog({
                   <SelectContent>
                     {APPOINTMENT_STATUSES.map((status) => (
                       <SelectItem key={status} value={status}>
-                        {status.charAt(0) + status.slice(1).toLowerCase()}
+                        {(
+                          {
+                            BOOKED: "已预约",
+                            CANCELLED: "已取消",
+                            COMPLETED: "已完成",
+                            RESCHEDULED: "已改期",
+                          } as Record<string, string>
+                        )[status] ?? status}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -286,7 +289,7 @@ export function AppointmentDialog({
           </Field>
 
           <Field
-            label="Reason"
+            label="就诊事由"
             htmlFor="reason"
             error={errors.reason?.message}
             className="sm:col-span-2"
@@ -294,7 +297,7 @@ export function AppointmentDialog({
             <Textarea
               id="reason"
               rows={3}
-              placeholder="Reason for the visit (optional)"
+              placeholder="请输入就诊事由（选填）"
               aria-invalid={Boolean(errors.reason)}
               {...register("reason")}
             />
@@ -307,7 +310,7 @@ export function AppointmentDialog({
             variant="outline"
             onClick={() => onOpenChange(false)}
           >
-            Cancel
+            取消
           </Button>
           <Button
             type="submit"
@@ -315,11 +318,7 @@ export function AppointmentDialog({
             variant="gradient"
             disabled={isSubmitting}
           >
-            {isSubmitting
-              ? "Saving..."
-              : isEdit
-                ? "Save changes"
-                : "Book appointment"}
+            {isSubmitting ? "保存中…" : isEdit ? "保存修改" : "确认预约"}
           </Button>
         </DialogFooter>
       </DialogContent>

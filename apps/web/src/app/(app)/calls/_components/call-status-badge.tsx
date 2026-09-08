@@ -5,13 +5,16 @@ const STATUS: Record<
   CallStatus,
   { label: string; variant: "success" | "warning" | "destructive" }
 > = {
-  COMPLETED: { label: "Completed", variant: "success" },
-  NO_AUDIO: { label: "No audio", variant: "warning" },
-  FAILED: { label: "Failed", variant: "destructive" },
+  COMPLETED: { label: "已完成", variant: "success" },
+  NO_AUDIO: { label: "无音频", variant: "warning" },
+  FAILED: { label: "失败", variant: "destructive" },
 };
 
 export function CallStatusBadge({ status }: { status: CallStatus }) {
-  const config = STATUS[status] ?? { label: status, variant: "warning" as const };
+  const config = STATUS[status] ?? {
+    label: status,
+    variant: "warning" as const,
+  };
   return <Badge variant={config.variant}>{config.label}</Badge>;
 }
 

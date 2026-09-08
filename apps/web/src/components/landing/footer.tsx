@@ -28,10 +28,10 @@ function XIcon(props: SVGProps<SVGSVGElement>) {
 }
 
 const NAV = [
-  { label: "Features", href: "#features" },
-  { label: "How it works", href: "#how-it-works" },
-  { label: "Tech", href: "#tech" },
-  { label: "Dashboard", href: "/dashboard" },
+  { label: "核心能力", href: "#features" },
+  { label: "工作流程", href: "#how-it-works" },
+  { label: "技术架构", href: "#tech" },
+  { label: "管理工作台", href: "/dashboard" },
 ];
 
 const SOCIALS = [

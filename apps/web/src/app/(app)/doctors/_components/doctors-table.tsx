@@ -50,11 +50,11 @@ export function DoctorsTable({
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
-            <TableHead>Doctor</TableHead>
-            <TableHead>Specialization</TableHead>
-            <TableHead>Department</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>医生</TableHead>
+            <TableHead>专科</TableHead>
+            <TableHead>科室</TableHead>
+            <TableHead>状态</TableHead>
+            <TableHead className="text-right">操作</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -89,7 +89,7 @@ export function DoctorsTable({
                       variant="ghost"
                       size="icon"
                       className="size-8"
-                      aria-label={`Actions for ${doctor.name}`}
+                      aria-label={`${doctor.name} 的操作`}
                     >
                       <MoreHorizontal className="size-4" />
                     </Button>
@@ -98,13 +98,13 @@ export function DoctorsTable({
                     <DropdownMenuItem asChild>
                       <Link href={`/doctors/${doctor.id}`}>
                         <Eye className="size-4" />
-                        View
+                        查看
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href={`/doctors/${doctor.id}/edit`}>
                         <Pencil className="size-4" />
-                        Edit
+                        编辑
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem
@@ -112,7 +112,7 @@ export function DoctorsTable({
                       onSelect={() => setPendingDelete(doctor)}
                     >
                       <Trash2 className="size-4" />
-                      Delete
+                      删除
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -128,18 +128,18 @@ export function DoctorsTable({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete doctor</DialogTitle>
+            <DialogTitle>删除医生</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete{" "}
+              确定删除医生{" "}
               <span className="font-medium text-foreground">
                 {pendingDelete?.name}
               </span>
-              ? This action cannot be undone.
+              吗？此操作无法撤销。
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setPendingDelete(null)}>
-              Cancel
+              取消
             </Button>
             <Button
               variant="destructive"
@@ -149,7 +149,7 @@ export function DoctorsTable({
                 setPendingDelete(null);
               }}
             >
-              Delete
+              删除
             </Button>
           </DialogFooter>
         </DialogContent>

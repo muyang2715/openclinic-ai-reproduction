@@ -60,7 +60,7 @@ function SoonCard({
             <Sparkles className="size-4 text-primary" />
             <Badge variant="info">
               <Lock className="size-3" />
-              Soon
+              即将上线
             </Badge>
           </div>
         </div>
@@ -78,9 +78,9 @@ export default function AnalyticsPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Analytics"
-        description="Track clinic performance and trends."
-        actions={<Badge variant="info">Live</Badge>}
+        title="运营分析"
+        description="查看医院服务表现与预约趋势。"
+        actions={<Badge variant="info">实时数据</Badge>}
       />
 
       {isError ? (
@@ -91,14 +91,14 @@ export default function AnalyticsPage() {
             </div>
             <div className="space-y-1">
               <h3 className="text-base font-semibold text-foreground">
-                Couldn&apos;t load analytics
+                暂时无法加载分析数据
               </h3>
               <p className="text-sm text-muted-foreground">
-                There was a problem reaching the server. Please try again.
+                服务器连接异常，请稍后重试。
               </p>
             </div>
             <Button variant="outline" onClick={() => refetch()}>
-              Retry
+              重试
             </Button>
           </CardContent>
         </Card>
@@ -113,22 +113,22 @@ export default function AnalyticsPage() {
             ) : (
               <>
                 <StatCard
-                  label="Total Appointments"
+                  label="预约总数"
                   value={data.totalAppointments}
                   icon={CalendarCheck}
                 />
                 <StatCard
-                  label="Active Doctors"
+                  label="在岗医生"
                   value={data.activeDoctors}
                   icon={Stethoscope}
                 />
                 <StatCard
-                  label="Total Patients"
+                  label="患者总数"
                   value={data.totalPatients.toLocaleString()}
                   icon={Users}
                 />
                 <StatCard
-                  label="Avg Appointment"
+                  label="平均预约时长"
                   value={`${data.averageAppointmentMinutes} min`}
                   icon={Clock}
                 />
@@ -138,20 +138,20 @@ export default function AnalyticsPage() {
 
           {/* Phase 2 (AI) metrics — placeholders */}
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <SoonCard label="Total Calls" icon={PhoneCall} />
-            <SoonCard label="AI Resolution Rate" icon={Activity} />
+            <SoonCard label="通话总数" icon={PhoneCall} />
+            <SoonCard label="智能解决率" icon={Activity} />
           </div>
 
           {/* Charts */}
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-            <ChartCard title="Appointments Trend" className="lg:col-span-2">
+            <ChartCard title="预约趋势" className="lg:col-span-2">
               {isPending || !data ? (
                 <Skeleton className="h-[260px] w-full" />
               ) : (
                 <AppointmentsTrendChart data={data.appointmentsTrend} />
               )}
             </ChartCard>
-            <ChartCard title="Appointment Status">
+            <ChartCard title="预约状态">
               {isPending || !data ? (
                 <Skeleton className="h-[180px] w-full" />
               ) : (
@@ -160,7 +160,7 @@ export default function AnalyticsPage() {
             </ChartCard>
           </div>
 
-          <ChartCard title="Weekly Appointments">
+          <ChartCard title="每周预约">
             {isPending || !data ? (
               <Skeleton className="h-[260px] w-full" />
             ) : (

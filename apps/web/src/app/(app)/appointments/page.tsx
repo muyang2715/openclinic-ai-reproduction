@@ -25,10 +25,7 @@ import {
 } from "@/components/ui/pagination";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useDoctors } from "@/hooks/useDoctors";
-import {
-  useAppointments,
-  useDeleteAppointment,
-} from "@/hooks/useAppointments";
+import { useAppointments, useDeleteAppointment } from "@/hooks/useAppointments";
 import type { Appointment, AppointmentStatus } from "@/types/appointment";
 import { AppointmentsTable } from "./_components/appointments-table";
 import { AppointmentsTableSkeleton } from "./_components/appointments-table-skeleton";
@@ -83,12 +80,12 @@ export default function AppointmentsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Appointments"
-        description="Schedule, track, and manage patient appointments."
+        title="预约管理"
+        description="统一安排、跟进并管理患者预约。"
         actions={
           <Button variant="gradient" onClick={openCreate}>
             <Plus className="size-4" />
-            New Appointment
+            新建预约
           </Button>
         }
       />
@@ -97,16 +94,16 @@ export default function AppointmentsPage() {
         <SearchInput
           value={search}
           onValueChange={setSearch}
-          placeholder="Search by patient name..."
+          placeholder="按患者姓名搜索…"
           containerClassName="lg:max-w-xs"
         />
         <div className="flex flex-col gap-3 sm:flex-row lg:ml-auto">
           <Select value={doctorId} onValueChange={setDoctorId}>
             <SelectTrigger className="w-full sm:w-[200px]">
-              <SelectValue placeholder="Doctor" />
+              <SelectValue placeholder="选择医生" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All doctors</SelectItem>
+              <SelectItem value="all">全部医生</SelectItem>
               {doctors.map((doctor) => (
                 <SelectItem key={doctor.id} value={doctor.id}>
                   {doctor.name}
@@ -121,13 +118,20 @@ export default function AppointmentsPage() {
             }
           >
             <SelectTrigger className="w-full sm:w-[160px]">
-              <SelectValue placeholder="Status" />
+              <SelectValue placeholder="预约状态" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All statuses</SelectItem>
+              <SelectItem value="all">全部状态</SelectItem>
               {APPOINTMENT_STATUSES.map((s) => (
                 <SelectItem key={s} value={s}>
-                  {s.charAt(0) + s.slice(1).toLowerCase()}
+                  {(
+                    {
+                      BOOKED: "已预约",
+                      CANCELLED: "已取消",
+                      COMPLETED: "已完成",
+                      RESCHEDULED: "已改期",
+                    } as Record<string, string>
+                  )[s] ?? s}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -145,25 +149,23 @@ export default function AppointmentsPage() {
             </div>
             <div className="space-y-1">
               <h3 className="text-base font-semibold text-foreground">
-                Couldn&apos;t load appointments
+                暂时无法加载预约
               </h3>
               <p className="text-sm text-muted-foreground">
-                There was a problem reaching the server. Please try again.
+                服务器连接异常，请稍后重试。
               </p>
             </div>
             <Button variant="outline" onClick={() => refetch()}>
-              Retry
+              重试
             </Button>
           </CardContent>
         </Card>
       ) : items.length === 0 ? (
         <EmptyState
           icon={CalendarDays}
-          title={hasFilters ? "No appointments found" : "No appointments yet"}
+          title={hasFilters ? "没有找到匹配的预约" : "暂无预约"}
           description={
-            hasFilters
-              ? "Try adjusting your search or filters."
-              : "Get started by booking your first appointment."
+            hasFilters ? "请调整搜索条件或筛选项。" : "从创建第一条预约开始。"
           }
           action={
             hasFilters ? (
@@ -175,12 +177,12 @@ export default function AppointmentsPage() {
                   setStatus("all");
                 }}
               >
-                Clear filters
+                清除筛选
               </Button>
             ) : (
               <Button variant="gradient" onClick={openCreate}>
                 <Plus className="size-4" />
-                New Appointment
+                新建预约
               </Button>
             )
           }
@@ -197,8 +199,8 @@ export default function AppointmentsPage() {
           />
           <div className="mt-4 flex flex-col items-center justify-between gap-4 sm:flex-row">
             <p className="text-sm text-muted-foreground">
-              Showing {(page - 1) * PAGE_SIZE + 1}–
-              {Math.min(page * PAGE_SIZE, total)} of {total} appointments
+              显示第 {(page - 1) * PAGE_SIZE + 1}–
+              {Math.min(page * PAGE_SIZE, total)} 条，共 {total} 条预约
             </p>
             {totalPages > 1 && (
               <Pagination className="mx-0 w-auto justify-end">
@@ -222,7 +224,9 @@ export default function AppointmentsPage() {
                   <PaginationItem>
                     <PaginationNext
                       disabled={page === totalPages}
-                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      onClick={() =>
+                        setPage((p) => Math.min(totalPages, p + 1))
+                      }
                     />
                   </PaginationItem>
                 </PaginationContent>

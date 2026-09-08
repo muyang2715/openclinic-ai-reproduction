@@ -9,7 +9,9 @@ const TYPE_LABEL: Record<DocFileType, string> = {
 };
 
 export function DocumentTypeBadge({ type }: { type: DocFileType }) {
-  return <Badge variant="outline">{TYPE_LABEL[type] ?? type.toUpperCase()}</Badge>;
+  return (
+    <Badge variant="outline">{TYPE_LABEL[type] ?? type.toUpperCase()}</Badge>
+  );
 }
 
 const STATUS_VARIANT: Record<
@@ -24,7 +26,11 @@ const STATUS_VARIANT: Record<
 export function DocumentStatusBadge({ status }: { status: DocumentStatus }) {
   return (
     <Badge variant={STATUS_VARIANT[status] ?? "default"}>
-      {status.charAt(0) + status.slice(1).toLowerCase()}
+      {status === "READY"
+        ? "已就绪"
+        : status === "PROCESSING"
+          ? "处理中"
+          : "失败"}
     </Badge>
   );
 }

@@ -19,33 +19,33 @@ const FEATURES: {
   icon: LucideIcon;
 }[] = [
   {
-    title: "Voice AI",
-    description: "Real-time speech conversations with natural AI voices.",
+    title: "智能语音接待",
+    description: "实时理解患者表达，以自然语音完成咨询与引导。",
     icon: Mic,
   },
   {
-    title: "Multi-Agent System",
-    description: "A supervisor agent intelligently routes every conversation.",
+    title: "多 Agent 分流",
+    description: "监督 Agent 将每一次来访交给最合适的专科流程。",
     icon: Network,
   },
   {
-    title: "Appointment Automation",
-    description: "Book, cancel, and reschedule appointments hands-free.",
+    title: "预约自动化",
+    description: "查询医生、识别冲突，并稳妥完成预约安排。",
     icon: CalendarCheck,
   },
   {
-    title: "Knowledge Base",
-    description: "Answer clinic questions instantly using RAG.",
+    title: "医疗知识库",
+    description: "基于院内文档回答服务、流程与就诊问题。",
     icon: BookOpen,
   },
   {
-    title: "Conversation Analytics",
-    description: "Store transcripts, summaries, and call recordings.",
+    title: "服务分析",
+    description: "沉淀转写、摘要与通话记录，持续改善患者体验。",
     icon: BarChart3,
   },
   {
-    title: "Human Handoff",
-    description: "Transfer conversations to clinic staff when needed.",
+    title: "人工协同",
+    description: "遇到复杂情况时，为医护团队保留清晰的接管入口。",
     icon: UserCog,
   },
 ];
@@ -55,9 +55,9 @@ function Features() {
     <section id="features" className="bg-secondary/40 py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="Capabilities"
-          title="Everything a modern clinic needs"
-          description="A complete AI front desk — from the first ring to the booked appointment."
+          eyebrow="核心能力"
+          title="一套稳健的医疗前台系统"
+          description="从第一声来电到预约落库，让患者服务有回应、有记录、有边界。"
         />
 
         <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">

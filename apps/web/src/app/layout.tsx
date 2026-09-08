@@ -13,21 +13,12 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://openclinic.site"),
   title: {
-    default: "OpenClinic AI — AI Voice Receptionist for Clinics",
-    template: "%s · OpenClinic AI",
+    default: "OpenClinic AI｜智能医疗前台",
+    template: "%s｜OpenClinic AI",
   },
   description:
-    "OpenClinic AI is an AI voice receptionist for modern healthcare — it books appointments, answers patient questions, and automates clinic front-desk workflows in real time.",
-  keywords: [
-    "AI receptionist",
-    "AI voice agent",
-    "healthcare automation",
-    "clinic appointment booking",
-    "medical scheduling",
-    "voice AI",
-    "LangGraph",
-    "conversational AI",
-  ],
+    "面向诊所与医院的智能前台，提供预约管理、患者咨询、知识库问答与急症分流。",
+  keywords: ["智能医疗前台", "医院预约管理", "医疗语音助手", "患者服务"],
   authors: [{ name: "Hunain Asif", url: "https://github.com/hunainasif" }],
   creator: "Hunain Asif",
   openGraph: {
@@ -51,7 +42,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="zh-CN" className={inter.variable}>
       <body className="font-sans">
         <Providers>{children}</Providers>
       </body>

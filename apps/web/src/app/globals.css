@@ -6,30 +6,30 @@
 /* ------------------------------------------------------------------ */
 :root {
   /* surfaces & text */
-  --background: #fafafc;
-  --foreground: #111827;
+  --background: #f4f7f8;
+  --foreground: #173042;
   --surface: #ffffff;
   --card: #ffffff;
-  --card-foreground: #111827;
+  --card-foreground: #173042;
   --popover: #ffffff;
   --popover-foreground: #111827;
 
   /* brand */
-  --brand: #7c3aed;
-  --brand-pink: #ec4899;
-  --accent-sky: #38bdf8;
+  --brand: #176b87;
+  --brand-pink: #4c9aa8;
+  --accent-sky: #63b8c5;
 
-  --primary: #7c3aed;
+  --primary: #176b87;
   --primary-foreground: #ffffff;
 
-  --secondary: #f4f4f7;
-  --secondary-foreground: #111827;
+  --secondary: #e9f0f2;
+  --secondary-foreground: #173042;
 
-  --muted: #f4f4f7;
-  --muted-foreground: #6b7280;
+  --muted: #e9f0f2;
+  --muted-foreground: #5e7280;
 
-  --accent: #f3eefe; /* light brand tint for hovers */
-  --accent-foreground: #6d28d9;
+  --accent: #e0f0f2; /* clinical teal tint for hovers */
+  --accent-foreground: #145b72;
 
   /* status */
   --success: #22c55e;
@@ -38,14 +38,14 @@
   --destructive-foreground: #ffffff;
 
   /* lines & fields */
-  --border: #eceef3;
-  --input: #eceef3;
-  --ring: #7c3aed;
+  --border: #d8e3e7;
+  --input: #d8e3e7;
+  --ring: #3e91a1;
 
   /* chart palette */
-  --chart-1: #7c3aed;
-  --chart-2: #ec4899;
-  --chart-3: #38bdf8;
+  --chart-1: #176b87;
+  --chart-2: #4c9aa8;
+  --chart-3: #79b9c2;
   --chart-4: #22c55e;
   --chart-5: #f59e0b;
 
@@ -90,7 +90,9 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans:
+    var(--font-inter), "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    ui-sans-serif, system-ui, sans-serif;
 
   --radius-sm: 8px;
   --radius-md: 10px;
@@ -118,6 +120,7 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "cv11", "ss01";
+    letter-spacing: 0.005em;
   }
   *:focus-visible {
     @apply outline-none ring-2 ring-ring/60 ring-offset-2 ring-offset-background;
@@ -127,10 +130,10 @@
 @layer utilities {
   /* brand gradient — logo, hero, CTAs, empty states, loaders only */
   .bg-brand-gradient {
-    background-image: linear-gradient(135deg, #ec4899, #8b5cf6);
+    background-image: linear-gradient(135deg, #176b87, #4c9aa8);
   }
   .text-brand-gradient {
-    background-image: linear-gradient(135deg, #ec4899, #8b5cf6);
+    background-image: linear-gradient(135deg, #176b87, #4c9aa8);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;

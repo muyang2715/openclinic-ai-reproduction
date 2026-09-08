@@ -10,10 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/layout/logo";
 
 const LINKS = [
-  { label: "Features", href: "#features" },
-  { label: "How it works", href: "#how-it-works" },
-  { label: "Tech", href: "#tech" },
-  { label: "Testimonials", href: "#testimonials" },
+  { label: "核心能力", href: "#features" },
+  { label: "工作流程", href: "#how-it-works" },
+  { label: "技术架构", href: "#tech" },
+  { label: "客户评价", href: "#testimonials" },
 ];
 
 function LandingNav() {
@@ -55,13 +55,13 @@ function LandingNav() {
         <div className="hidden items-center gap-2 md:flex">
           <Button asChild variant="ghost" size="sm">
             {session ? (
-              <Link href="/dashboard">View Dashboard</Link>
+              <Link href="/dashboard">进入工作台</Link>
             ) : (
-              <Link href="/sign-in">Login</Link>
+              <Link href="/sign-in">管理端登录</Link>
             )}
           </Button>
           <Button asChild variant="gradient" size="sm">
-            <a href="#voice-demo">Start Voice Demo</a>
+            <a href="#voice-demo">体验智能前台</a>
           </Button>
         </div>
 
@@ -69,7 +69,7 @@ function LandingNav() {
           type="button"
           onClick={() => setOpen((o) => !o)}
           className="flex size-10 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-secondary md:hidden"
-          aria-label={open ? "Close menu" : "Open menu"}
+          aria-label={open ? "关闭菜单" : "打开菜单"}
         >
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
@@ -92,17 +92,17 @@ function LandingNav() {
               <Button asChild variant="outline">
                 {session ? (
                   <Link href="/dashboard" onClick={() => setOpen(false)}>
-                    View Dashboard
+                    进入工作台
                   </Link>
                 ) : (
                   <Link href="/sign-in" onClick={() => setOpen(false)}>
-                    Login
+                    管理端登录
                   </Link>
                 )}
               </Button>
               <Button asChild variant="gradient">
                 <a href="#voice-demo" onClick={() => setOpen(false)}>
-                  Start Voice Demo
+                  体验智能前台
                 </a>
               </Button>
             </div>

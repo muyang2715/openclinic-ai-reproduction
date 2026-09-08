@@ -12,10 +12,10 @@ type Stat = {
 };
 
 const STATS: Stat[] = [
-  { target: 10000, suffix: "+", label: "Appointments" },
-  { target: 95, suffix: "%", label: "AI Resolution Rate" },
-  { staticValue: "24/7", label: "Availability" },
-  { target: 500, prefix: "<", suffix: "ms", label: "Avg Response Time" },
+  { target: 10000, suffix: "+", label: "已服务预约" },
+  { target: 95, suffix: "%", label: "智能解决率" },
+  { staticValue: "24/7", label: "全天候响应" },
+  { target: 500, prefix: "<", suffix: "ms", label: "平均响应时间" },
 ];
 
 function StatValue({ stat }: { stat: Stat }) {

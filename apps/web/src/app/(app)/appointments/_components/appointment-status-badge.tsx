@@ -5,10 +5,10 @@ const config: Record<
   AppointmentStatus,
   { label: string; variant: "info" | "success" | "destructive" | "warning" }
 > = {
-  BOOKED: { label: "Booked", variant: "info" },
-  COMPLETED: { label: "Completed", variant: "success" },
-  CANCELLED: { label: "Cancelled", variant: "destructive" },
-  RESCHEDULED: { label: "Rescheduled", variant: "warning" },
+  BOOKED: { label: "已预约", variant: "info" },
+  COMPLETED: { label: "已完成", variant: "success" },
+  CANCELLED: { label: "已取消", variant: "destructive" },
+  RESCHEDULED: { label: "已改期", variant: "warning" },
 };
 
 export const APPOINTMENT_STATUSES: AppointmentStatus[] = [

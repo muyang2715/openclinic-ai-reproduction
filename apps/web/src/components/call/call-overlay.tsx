@@ -34,16 +34,16 @@ export function CallOverlay() {
 
   const statusText =
     status === "connecting"
-      ? "Connecting…"
+      ? "正在连接…"
       : agentSpeaking
-        ? "Agent speaking…"
+        ? "智能前台正在回应…"
         : processing
-          ? "Thinking…"
+          ? "正在理解…"
           : muted
-            ? "Muted"
+            ? "已静音"
             : userSpeaking
               ? "You're speaking…"
-              : "Listening…";
+              : "正在聆听…";
 
   return (
     <AnimatePresence>

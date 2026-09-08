@@ -7,10 +7,15 @@ import { cn } from "@/lib/utils";
 import { VoiceOrb } from "./voice-orb";
 
 const KPIS = [
-  { label: "Doctors", value: "24", icon: Stethoscope, tint: "text-brand" },
-  { label: "Patients", value: "1,204", icon: Users, tint: "text-brand-pink" },
-  { label: "Today", value: "38", icon: CalendarDays, tint: "text-accent-sky" },
-  { label: "Upcoming", value: "12", icon: Clock, tint: "text-success" },
+  { label: "医生", value: "24", icon: Stethoscope, tint: "text-brand" },
+  { label: "患者", value: "1,204", icon: Users, tint: "text-brand-pink" },
+  {
+    label: "今日预约",
+    value: "38",
+    icon: CalendarDays,
+    tint: "text-accent-sky",
+  },
+  { label: "待处理", value: "12", icon: Clock, tint: "text-success" },
 ];
 
 const BARS = [42, 58, 36, 72, 50, 88, 64];
@@ -144,7 +149,7 @@ function HeroDashboardMock() {
           <p className="text-[11px] font-semibold text-foreground">
             Appointment booked
           </p>
-          <p className="text-[10px] text-muted-foreground">by AI · just now</p>
+          <p className="text-[10px] text-muted-foreground">智能前台 · 刚刚</p>
         </div>
       </motion.div>
     </div>

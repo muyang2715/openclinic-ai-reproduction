@@ -14,7 +14,7 @@ function Logo({
     <Link
       href={href}
       className={cn("flex items-center gap-2.5", className)}
-      aria-label="OpenClinic AI home"
+      aria-label="返回 OpenClinic AI 首页"
     >
       <span className="flex size-9 items-center justify-center rounded-xl bg-brand-gradient shadow-soft-md">
         <Activity className="size-5 text-white" strokeWidth={2.25} />

@@ -20,18 +20,18 @@ import {
 import { SectionHeading } from "./section-heading";
 
 const TECH: { name: string; description: string; icon: LucideIcon }[] = [
-  { name: "Next.js", description: "App Router frontend", icon: Triangle },
-  { name: "Express", description: "REST API backend", icon: Server },
-  { name: "TypeScript", description: "End-to-end type safety", icon: Braces },
-  { name: "LangGraph", description: "Multi-agent orchestration", icon: Workflow },
-  { name: "LangChain", description: "LLM tooling & RAG", icon: Link2 },
-  { name: "Deepgram", description: "Real-time speech-to-text", icon: AudioLines },
-  { name: "ElevenLabs", description: "Natural voice synthesis", icon: Volume2 },
-  { name: "PostgreSQL", description: "Relational data store", icon: Database },
-  { name: "Prisma", description: "Type-safe ORM", icon: Boxes },
-  { name: "AWS S3", description: "Recordings & assets", icon: Cloud },
-  { name: "AWS EC2", description: "Cloud compute hosting", icon: Cpu },
-  { name: "GitHub Actions", description: "CI/CD pipelines", icon: GitBranch },
+  { name: "Next.js", description: "现代化管理端界面", icon: Triangle },
+  { name: "Express", description: "稳定的业务 API", icon: Server },
+  { name: "TypeScript", description: "端到端类型安全", icon: Braces },
+  { name: "LangGraph", description: "多 Agent 工作流编排", icon: Workflow },
+  { name: "LangChain", description: "模型工具与知识库", icon: Link2 },
+  { name: "Deepgram", description: "实时语音转写", icon: AudioLines },
+  { name: "ElevenLabs", description: "自然语音播报", icon: Volume2 },
+  { name: "PostgreSQL", description: "医疗业务数据存储", icon: Database },
+  { name: "Prisma", description: "类型安全的数据访问", icon: Boxes },
+  { name: "AWS S3", description: "通话记录与文件", icon: Cloud },
+  { name: "AWS EC2", description: "服务运行环境", icon: Cpu },
+  { name: "GitHub Actions", description: "持续集成与交付", icon: GitBranch },
 ];
 
 function TechStack() {
@@ -39,9 +39,9 @@ function TechStack() {
     <section id="tech" className="py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="Infrastructure"
-          title="Built with Modern AI Infrastructure"
-          description="A production-grade stack — the same tools powering today's leading AI products."
+          eyebrow="技术架构"
+          title="稳健、清晰、可持续演进"
+          description="以成熟的 Web、Agent、数据与语音组件构成医疗服务基础设施。"
         />
 
         <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">

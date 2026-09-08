@@ -40,7 +40,7 @@ function Hero() {
           <motion.div variants={item}>
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-foreground shadow-soft">
               <Sparkles className="size-3.5 text-primary" />
-              AI Receptionist Platform
+              智能医疗前台平台
             </span>
           </motion.div>
 
@@ -48,17 +48,15 @@ function Hero() {
             variants={item}
             className="mt-6 text-4xl leading-[1.08] font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl"
           >
-            AI Receptionist for{" "}
-            <span className="text-brand-gradient">Modern Healthcare</span>
+            让医疗服务更从容，{" "}
+            <span className="text-brand-gradient">让患者被及时接住</span>
           </motion.h1>
 
           <motion.p
             variants={item}
             className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground"
           >
-            Automate patient conversations, appointment scheduling, and clinic
-            operations with a production-ready AI platform powered by LangGraph,
-            Deepgram, and ElevenLabs.
+            以稳健的智能分流承接患者咨询、预约与急症提醒，让医护团队专注于真正需要专业判断的每一次照护。
           </motion.p>
 
           <motion.div
@@ -72,7 +70,7 @@ function Hero() {
               className="transition-transform hover:scale-[1.03]"
             >
               <Mic className="size-4" />
-              Start Voice Demo
+              体验智能前台
             </Button>
             {session ? (
               <Button
@@ -82,7 +80,7 @@ function Hero() {
                 className="transition-transform hover:scale-[1.03]"
               >
                 <Link href="/dashboard">
-                  View Dashboard
+                  进入工作台
                   <ArrowRight className="size-4" />
                 </Link>
               </Button>
@@ -95,7 +93,7 @@ function Hero() {
               >
                 <Link href="/sign-in">
                   <LogIn className="size-4" />
-                  Login
+                  管理端登录
                 </Link>
               </Button>
             )}
@@ -106,16 +104,16 @@ function Hero() {
             className="mt-8 flex items-center gap-6 text-xs text-muted-foreground"
           >
             <span className="flex items-center gap-1.5">
-              <span className="size-1.5 rounded-full bg-success" />
-              Multi-agent voice AI
+              <span className="size-1.5 rounded-full bg-success" />多 Agent
+              智能分流
             </span>
             <span className="flex items-center gap-1.5">
               <span className="size-1.5 rounded-full bg-success" />
-              24/7 availability
+              全天候响应
             </span>
             <span className="flex items-center gap-1.5">
               <span className="size-1.5 rounded-full bg-success" />
-              &lt;500ms response
+              清晰、可追溯
             </span>
           </motion.div>
         </motion.div>
